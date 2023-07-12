@@ -116,6 +116,14 @@ static void Field_VariableSizeDraw( field_t *edit, int x, int y, int width, int 
 		if ( len > drawLen + prestep ) {
 			SCR_DrawSmallChar( x + ( edit->widthInChars - 1 ) * size, y, '>' );
 		}
+	} else if ( size == mediumchar_width ) {
+		if ( len > drawLen + prestep ) {
+			SCR_DrawStringExt( x + ( edit->widthInChars - 1 ) * MEDIUMCHAR_WIDTH, y, size, ">",
+				g_color_table[ ColorIndex( COLOR_WHITE ) ], qfalse, noColorEscape );
+		}
+		// draw medium string with drop shadow
+		SCR_DrawStringExt( x, y, MEDIUMCHAR_WIDTH, str, g_color_table[ ColorIndexFromChar( curColor ) ],
+			qfalse, noColorEscape );
 	} else {
 		if ( len > drawLen + prestep ) {
 			SCR_DrawStringExt( x + ( edit->widthInChars - 1 ) * BIGCHAR_WIDTH, y, size, ">",
@@ -142,6 +150,10 @@ static void Field_VariableSizeDraw( field_t *edit, int x, int y, int width, int 
 
 		if ( size == smallchar_width ) {
 			SCR_DrawSmallChar( x + ( edit->cursor - prestep - i ) * size, y, cursorChar );
+		} else if ( size == mediumchar_width ) {
+			str[0] = cursorChar;
+			str[1] = '\0';
+			SCR_DrawMediumString( x + ( edit->cursor - prestep - i ) * MEDIUMCHAR_WIDTH, y, str, 1.0, qfalse );
 		} else {
 			str[0] = cursorChar;
 			str[1] = '\0';
@@ -154,6 +166,12 @@ static void Field_VariableSizeDraw( field_t *edit, int x, int y, int width, int 
 void Field_Draw( field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape )
 {
 	Field_VariableSizeDraw( edit, x, y, width, smallchar_width, showCursor, noColorEscape );
+}
+
+
+void Field_MediumDraw( field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape )
+{
+	Field_VariableSizeDraw( edit, x, y, width, mediumchar_width, showCursor, noColorEscape );
 }
 
 

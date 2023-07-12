@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 int bigchar_width;
 int bigchar_height;
+int mediumchar_width;
+int mediumchar_height;
 int smallchar_width;
 int smallchar_height;
 
@@ -748,17 +750,17 @@ static void Con_DrawNotify( void )
 
 		if (chat_team)
 		{
-			SCR_DrawBigString( SMALLCHAR_WIDTH, v + SMALLCHAR_HEIGHT, "say_team:", 1.0f, qfalse );
+			SCR_DrawMediumString( SMALLCHAR_WIDTH, v + SMALLCHAR_HEIGHT, "say_team:", 1.0f, qfalse );
 			skip = 10;
 		}
 		else
 		{
-			SCR_DrawBigString( SMALLCHAR_WIDTH, v + SMALLCHAR_HEIGHT, "say:", 1.0f, qfalse );
+			SCR_DrawMediumString( SMALLCHAR_WIDTH, v + SMALLCHAR_HEIGHT, "say:", 1.0f, qfalse );
 			skip = 5;
 		}
 
-		Field_BigDraw( &chatField, skip * BIGCHAR_WIDTH, v + SMALLCHAR_HEIGHT,
-			SCREEN_WIDTH - ( skip + 1 ) * BIGCHAR_WIDTH, qtrue, qtrue );
+		Field_MediumDraw( &chatField, skip * MEDIUMCHAR_WIDTH, v + SMALLCHAR_HEIGHT,
+			SCREEN_WIDTH - ( skip + 1 ) * MEDIUMCHAR_WIDTH, qtrue, qtrue );
 	}
 }
 

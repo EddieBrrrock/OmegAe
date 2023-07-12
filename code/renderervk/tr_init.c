@@ -1769,7 +1769,7 @@ static void R_Register( void )
 	ri.Cvar_CheckRange( r_bloom_threshold, "0.01", "1", CV_FLOAT );
 	ri.Cvar_SetDescription(r_bloom_threshold, "Color level to extract to bloom texture, default is 0.6.");
 
-	r_bloom_intensity = ri.Cvar_Get( "r_bloom_intensity", "0.3", CVAR_ARCHIVE_ND | CVAR_LATCH );
+	r_bloom_intensity = ri.Cvar_Get( "r_bloom_intensity", "0.2", CVAR_ARCHIVE_ND | CVAR_LATCH );
 	ri.Cvar_CheckRange( r_bloom_intensity, "0.01", "2", CV_FLOAT );
 	ri.Cvar_SetDescription( r_bloom_intensity, "Final bloom blend factor, default is 0.5." );
 

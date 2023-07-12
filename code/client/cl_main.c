@@ -1180,6 +1180,7 @@ static qboolean CL_RestoreOldGame( void )
 		cl_oldGameSet = qfalse;
 		Cvar_Set( "fs_game", cl_oldGame );
 		FS_ConditionalRestart( clc.checksumFeed, qtrue );
+		Cbuf_ExecuteText( EXEC_APPEND, "snd_restart\n" );
 		return qtrue;
 	}
 	return qfalse;

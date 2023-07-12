@@ -47,6 +47,14 @@ ifndef USE_SDL
 USE_SDL=1
 endif
 
+ifndef OMEGA
+  ifndef RATMOD
+    ifndef AFTERSHOCK
+      OMEGA=1
+    endif
+  endif
+endif
+
 # valid options: opengl, vulkan
 RENDERER_DEFAULT = opengl
 
@@ -320,6 +328,17 @@ ifeq ($(GENERATE_DEPENDENCIES),1)
   BASE_CFLAGS += -MMD
 endif
 
+ifeq ($(OMEGA),1)
+  BASE_CFLAGS += -DOMEGA
+endif
+
+ifeq ($(RATMOD),1)
+  BASE_CFLAGS += -DRATMOD
+endif
+
+ifeq ($(AFTERSHOCK),1)
+  BASE_CFLAGS += -DAFTERSHOCK
+endif
 
 ARCHEXT=
 

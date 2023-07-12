@@ -34,7 +34,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CONSOLE_WINDOW_TITLE  "OmegA Console"
 // 1.32 released 7-10-2002
 
-#define DEFAULT_GAME			"omega"
+#ifdef OMEGA
+  #define DEFAULT_GAME			"omega"
+#elif RATMOD
+  #define DEFAULT_GAME			"rat"
+#elif AFTERSHOCK
+  #define DEFAULT_GAME			"aftershock"
+#endif
 
 #define BASEGAME				"baseoa"
 //#define BASEDEMO				"demoq3"
@@ -412,6 +418,9 @@ extern	vec3_t	bytedirs[NUMVERTEXNORMALS];
 
 #define SMALLCHAR_WIDTH		8
 #define SMALLCHAR_HEIGHT	16
+
+#define MEDIUMCHAR_WIDTH	12
+#define MEDIUMCHAR_HEIGHT	16
 
 #define BIGCHAR_WIDTH		16
 #define BIGCHAR_HEIGHT		16

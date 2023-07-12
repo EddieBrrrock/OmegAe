@@ -355,6 +355,8 @@ typedef struct {
 
 extern int bigchar_width;
 extern int bigchar_height;
+extern int mediumchar_width;
+extern int mediumchar_height;
 extern int smallchar_width;
 extern int smallchar_height;
 
@@ -485,6 +487,7 @@ extern  field_t     chatField;
 extern  field_t     g_consoleField;
 
 void Field_Draw( field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape );
+void Field_MediumDraw( field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape );
 void Field_BigDraw( field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape );
 
 //
@@ -541,6 +544,7 @@ void	SCR_FillRect( float x, float y, float width, float height,
 void	SCR_DrawPic( float x, float y, float width, float height, qhandle_t hShader );
 void	SCR_DrawNamedPic( float x, float y, float width, float height, const char *picname );
 
+void	SCR_DrawMediumString( int x, int y, const char *s, float alpha, qboolean noColorEscape );	
 void	SCR_DrawBigString( int x, int y, const char *s, float alpha, qboolean noColorEscape );			// draws a string with embedded color control characters with fade
 void	SCR_DrawStringExt( int x, int y, float size, const char *string, const float *setColor, qboolean forceColor, qboolean noColorEscape );
 void	SCR_DrawSmallStringExt( int x, int y, const char *string, const float *setColor, qboolean forceColor, qboolean noColorEscape );
