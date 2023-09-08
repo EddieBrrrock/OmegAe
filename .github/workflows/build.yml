@@ -190,6 +190,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: "latest"
           prerelease: true
+          overwrite: true
           title: Development Build (OpenArena as default)
           files: |
             *.zip
