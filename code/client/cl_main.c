@@ -1285,11 +1285,7 @@ qboolean CL_Disconnect( qboolean showMainMenu ) {
 	// not connected to a pure server anymore
 	cl_connectedToPureServer = 0;
 
-	if ( cl_guidServerUniq->integer ) {
-		Cvar_Set( "cl_guid", "" );
-	} else {
-		CL_UpdateGUID( NULL, 0 );
-	}
+	CL_UpdateGUID( NULL, 0 );
 
 	// Cmd_RemoveCommand( "callvote" );
 	Cmd_RemoveCgameCommands();
@@ -1645,7 +1641,10 @@ static void CL_Connect_f( void ) {
 
 	Com_Printf( "%s resolved to %s\n", cls.servername, serverString );
 
-	CL_UpdateGUID( NULL, 0 );
+	if( cl_guidServerUniq->integer )
+		CL_UpdateGUID( serverString, strlen( serverString ) );
+	else
+		CL_UpdateGUID( NULL, 0 );
 
 	// if we aren't playing on a lan, we need to authenticate
 	// with the cd key
