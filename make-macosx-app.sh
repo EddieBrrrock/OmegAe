@@ -264,11 +264,7 @@ fi
 
 # set the final application bundle output directory
 if [ "${2}" == "" ]; then
-	if [ -n "${MACOSX_DEPLOYMENT_TARGET_ARM64}" ]; then
-		BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-universal2"
-	else
-		BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-universal"
-	fi
+	BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-universal2"
 	if [ ! -d ${BUILT_PRODUCTS_DIR} ]; then
 		mkdir -p ${BUILT_PRODUCTS_DIR} || exit 1;
 	fi
@@ -389,7 +385,7 @@ function action()
 
 	if [ -x "${HAS_LIPO}" ]; then
 		COMMAND="${HAS_LIPO} -create -o"
-		# $HAS_LIPO -create -o "${1}" ${2} # make sure $2 is treated as a list of files
+		$HAS_LIPO -create -o "${1}" ${2} # make sure $2 is treated as a list of files
 	elif [ -x ${HAS_CP} ]; then
 		COMMAND="${HAS_CP}"
 		SRC="${2// */}" # in case there is a list here, use only the first item
