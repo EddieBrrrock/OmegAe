@@ -3136,9 +3136,9 @@ __recompile:
 		emit(BLX(R12));
 		//emit(BKPT(0));
 
-		savedOffset[FUNC_BADR] = compiledOfs;
-		emit_MOVRxi( R12, (intptr_t) ErrBadDataRead );
-		emit( BLX( R12 ) );
+		//savedOffset[FUNC_BADR] = compiledOfs;
+		//emit_MOVRxi( R12, (intptr_t) ErrBadDataRead );
+		//emit( BLX( R12 ) );
 
 		savedOffset[FUNC_BADW] = compiledOfs;
 		emit_MOVRxi( R12, (intptr_t) ErrBadDataWrite );

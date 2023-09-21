@@ -4681,9 +4681,9 @@ __compile:
 		EmitOSOFFunc( vm );
 
 		// read access range violation
-		EmitAlign( FUNC_ALIGN );
-		funcOffset[ FUNC_DATR ] = compiledOfs;
-		EmitDATRFunc( vm );
+		//EmitAlign( FUNC_ALIGN );
+		//funcOffset[ FUNC_DATR ] = compiledOfs;
+		//EmitDATRFunc( vm );
 
 		// write access range violation
 		EmitAlign( FUNC_ALIGN );
