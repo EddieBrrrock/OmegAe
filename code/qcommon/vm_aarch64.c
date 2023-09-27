@@ -3400,9 +3400,9 @@ __recompile:
 		emit_MOVXi(R16, (intptr_t)ErrBadProgramStack);
 		emit(BLR(R16));
 
-		//savedOffset[ FUNC_BADR ] = compiledOfs;
-		//emit_MOVXi( R16, (intptr_t) ErrBadDataRead );
-		//emit( BLR( R16 ) );
+		savedOffset[ FUNC_BADR ] = compiledOfs;
+		emit_MOVXi( R16, (intptr_t) ErrBadDataRead );
+		emit( BLR( R16 ) );
 
 		savedOffset[ FUNC_BADW ] = compiledOfs;
 		emit_MOVXi( R16, (intptr_t) ErrBadDataWrite );
