@@ -176,7 +176,7 @@ RENDERER_VULKAN_NAME="${RENDERER_VULKAN}.dylib"
 
 ICNSDIR="code/unix"
 ICNS="quake3_flat.icns"
-PKGINFO="APPLIOOMG"
+PKGINFO="APPLOMG"
 
 OBJROOT="build"
 #BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
@@ -328,39 +328,6 @@ PLIST="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <true/>
     <key>LSMinimumSystemVersion</key>
     <string>${MACOSX_DEPLOYMENT_TARGET}</string>"
-
-if [ -n "${MACOSX_DEPLOYMENT_TARGET_PPC}" ] || [ -n "${MACOSX_DEPLOYMENT_TARGET_X86}" ] || [ -n "${MACOSX_DEPLOYMENT_TARGET_X86_64}" ] || [ -n "${MACOSX_DEPLOYMENT_TARGET_ARM64}" ]; then
-	PLIST="${PLIST}
-    <key>LSMinimumSystemVersionByArchitecture</key>
-    <dict>"
-
-	if [ -n "${MACOSX_DEPLOYMENT_TARGET_PPC}" ]; then
-	PLIST="${PLIST}
-        <key>ppc</key>
-        <string>${MACOSX_DEPLOYMENT_TARGET_PPC}</string>"
-	fi
-
-	if [ -n "${MACOSX_DEPLOYMENT_TARGET_X86}" ]; then
-	PLIST="${PLIST}
-        <key>i386</key>
-        <string>${MACOSX_DEPLOYMENT_TARGET_X86}</string>"
-	fi
-
-	if [ -n "${MACOSX_DEPLOYMENT_TARGET_X86_64}" ]; then
-	PLIST="${PLIST}
-        <key>x86_64</key>
-        <string>${MACOSX_DEPLOYMENT_TARGET_X86_64}</string>"
-	fi
-	
-	if [ -n "${MACOSX_DEPLOYMENT_TARGET_ARM64}" ]; then
-	PLIST="${PLIST}
-        <key>arm64</key>
-        <string>${MACOSX_DEPLOYMENT_TARGET_ARM64}</string>"
-	fi
-
-	PLIST="${PLIST}
-    </dict>"
-fi
 
 PLIST="${PLIST}
     <key>NSHumanReadableCopyright</key>
