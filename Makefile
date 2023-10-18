@@ -500,7 +500,7 @@ ifeq ($(COMPILE_PLATFORM),darwin)
 
   ifeq ($(USE_LOCAL_HEADERS),1)
     MACLIBSDIR=$(MOUNT_DIR)/libsdl/macosx
-    BASE_CFLAGS += -I$(SDLHDIR)/include
+    BASE_CFLAGS += -I$(SDLHDIR)
     CLIENT_LDFLAGS += $(MACLIBSDIR)/libSDL2-2.0.0.dylib
     CLIENT_EXTRA_FILES += $(MACLIBSDIR)/libSDL2-2.0.0.dylib
   else
