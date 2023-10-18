@@ -14,7 +14,7 @@ if [ $# == 0 ] || [ $# -gt 2 ]; then
 	echo " x86"
 	echo " x86_64"
 	echo " ppc"
-	echo " aarch64"
+	echo " arm64"
 	echo
 	exit 1
 fi
@@ -42,15 +42,15 @@ if [ "$2" != "" ]; then
 		CURRENT_ARCH="x86_64"
 	elif [ "$2" == "ppc" ]; then
 		CURRENT_ARCH="ppc"
-	elif [ "$2" == "aarch64" ]; then
-		CURRENT_ARCH="aarch64"
+	elif [ "$2" == "arm64" ]; then
+		CURRENT_ARCH="arm64"
 	else
 		echo "Invalid architecture: $2"
 		echo "Valid architectures are:"
 		echo " x86"
 		echo " x86_64"
 		echo " ppc"
-		echo " aarch64"
+		echo " arm64"
 		echo
 		exit 1
 	fi
@@ -82,7 +82,7 @@ function symlinkArch()
     IS32=`file "${SRCFILE}.${EXT}" | grep "i386"`
     IS64=`file "${SRCFILE}.${EXT}" | grep "x86_64"`
     ISPPC=`file "${SRCFILE}.${EXT}" | grep "ppc"`
-    ISARM=`file "${SRCFILE}.${EXT}" | grep "aarch64"`
+    ISARM=`file "${SRCFILE}.${EXT}" | grep "arm64"`
 
     if [ "${IS32}" != "" ]; then
         if [ ! -L "${DSTFILE}x86.${EXT}" ]; then
@@ -109,11 +109,11 @@ function symlinkArch()
     fi
 
     if [ "${ISARM}" != "" ]; then
-        if [ ! -L "${DSTFILE}aarch64.${EXT}" ]; then
-            ln -s "${SRCFILE}.${EXT}" "${DSTFILE}aarch64.${EXT}"
+        if [ ! -L "${DSTFILE}arm64.${EXT}" ]; then
+            ln -s "${SRCFILE}.${EXT}" "${DSTFILE}arm64.${EXT}"
         fi
-    elif [ -L "${DSTFILE}aarch64.${EXT}" ]; then
-        rm "${DSTFILE}aarch64.${EXT}"
+    elif [ -L "${DSTFILE}arm64.${EXT}" ]; then
+        rm "${DSTFILE}arm64.${EXT}"
     fi
 
     popd > /dev/null
@@ -123,7 +123,7 @@ SEARCH_ARCHS="																	\
 	x86																			\
 	x86_64																		\
 	ppc																			\
-	aarch64																		\
+	arm64																		\
 "
 
 HAS_LIPO=`command -v lipo`
@@ -143,23 +143,30 @@ fi
 
 AVAILABLE_ARCHS=""
 
-Q3E_VERSION="1.32e"
-Q3E_CLIENT_ARCHS=""
-Q3E_SERVER_ARCHS=""
+OMG_VERSION="3.2.5"
+OMG_CLIENT_ARCHS=""
+OMG_SERVER_ARCHS=""
+OMG_RENDERER_VK_ARCHS=""
 
-BASEDIR="baseq3"
+BASEDIR="baseoa"
 
-DEDICATED_NAME="quake3e.ded"
+RENDERER_OPENGL="renderer_opengl"
+RENDERER_VULKAN="renderer_vulkan"
+
+DEDICATED_NAME="omg_ded"
+
+RENDERER_OPENGL1_NAME="${RENDERER_OPENGL}.dylib"
+RENDERER_VULKAN_NAME="${RENDERER_VULKAN}.dylib"
 
 ICNSDIR="code/unix"
 ICNS="quake3_flat.icns"
-PKGINFO="APPLQ3E"
+PKGINFO="APPLOMG"
 
 OBJROOT="build"
 #BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
-PRODUCT_NAME="quake3e"
+PRODUCT_NAME="omega"
 WRAPPER_EXTENSION="app"
-WRAPPER_NAME="${PRODUCT_NAME}.${WRAPPER_EXTENSION}"
+WRAPPER_NAME="OmegA.${WRAPPER_EXTENSION}"
 CONTENTS_FOLDER_PATH="${WRAPPER_NAME}/Contents"
 UNLOCALIZED_RESOURCES_FOLDER_PATH="${CONTENTS_FOLDER_PATH}/Resources"
 EXECUTABLE_FOLDER_PATH="${CONTENTS_FOLDER_PATH}/MacOS"
@@ -169,8 +176,10 @@ EXECUTABLE_NAME="${PRODUCT_NAME}"
 for ARCH in $SEARCH_ARCHS; do
 	CURRENT_ARCH=${ARCH}
 	BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
-	Q3E_CLIENT="${EXECUTABLE_NAME}.${CURRENT_ARCH}"
-	Q3E_SERVER="${DEDICATED_NAME}.${CURRENT_ARCH}"
+	OMG_CLIENT="${EXECUTABLE_NAME}.${CURRENT_ARCH}"
+	OMG_SERVER="${DEDICATED_NAME}.${CURRENT_ARCH}"
+	OMG_RENDERER_GL1="${RENDERER_OPENGL}_${CURRENT_ARCH}.dylib"
+	OMG_RENDERER_VK="${RENDERER_VULKAN}_${CURRENT_ARCH}.dylib"
 
 	if [ ! -d ${BUILT_PRODUCTS_DIR} ]; then
 		CURRENT_ARCH=""
@@ -179,14 +188,22 @@ for ARCH in $SEARCH_ARCHS; do
 	fi
 
 	# executables
-	if [ -e ${BUILT_PRODUCTS_DIR}/${Q3E_CLIENT} ]; then
-		Q3E_CLIENT_ARCHS="${BUILT_PRODUCTS_DIR}/${Q3E_CLIENT} ${Q3E_CLIENT_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${OMG_CLIENT} ]; then
+		OMG_CLIENT_ARCHS="${BUILT_PRODUCTS_DIR}/${OMG_CLIENT} ${OMG_CLIENT_ARCHS}"
 		VALID_ARCHS="${ARCH} ${VALID_ARCHS}"
 	else
 		continue
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${Q3E_SERVER} ]; then
-		Q3E_SERVER_ARCHS="${BUILT_PRODUCTS_DIR}/${Q3E_SERVER} ${Q3E_SERVER_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${OMG_SERVER} ]; then
+		OMG_SERVER_ARCHS="${BUILT_PRODUCTS_DIR}/${OMG_SERVER} ${OMG_SERVER_ARCHS}"
+	fi
+
+	# renderers
+	if [ -e ${BUILT_PRODUCTS_DIR}/${OMG_RENDERER_GL1} ]; then
+		OMG_RENDERER_GL1_ARCHS="${BUILT_PRODUCTS_DIR}/${OMG_RENDERER_GL1} ${OMG_RENDERER_GL1_ARCHS}"
+	fi
+	if [ -e ${BUILT_PRODUCTS_DIR}/${OMG_RENDERER_VK} ]; then
+		OMG_RENDERER_VK_ARCHS="${BUILT_PRODUCTS_DIR}/${OMG_RENDERER_VK} ${OMG_RENDERER_VK_ARCHS}"
 	fi
 
 	#echo "valid arch: ${ARCH}"
@@ -196,12 +213,12 @@ done
 cd `dirname $0`
 
 if [ ! -f Makefile ]; then
-	echo "$0 must be run from the quake3e build directory"
+	echo "$0 must be run from the omega build directory"
 	exit 1
 fi
 
-if [ "${Q3E_CLIENT_ARCHS}" == "" ]; then
-	echo "$0: no quake3e binary architectures were found for target '${TARGET_NAME}'"
+if [ "${OMG_CLIENT_ARCHS}" == "" ]; then
+	echo "$0: no omega binary architectures were found for target '${TARGET_NAME}'"
 	exit 1
 fi
 
@@ -245,13 +262,13 @@ PLIST="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <plist version=\"1.0\">
 <dict>
     <key>CFBundleDevelopmentRegion</key>
-    <string>en</string>
+    <string>fr</string>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIconFile</key>
     <string>quake3_flat</string>
     <key>CFBundleIdentifier</key>
-    <string>org.quake3e.${PRODUCT_NAME}</string>
+    <string>org.omega.${PRODUCT_NAME}</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -259,11 +276,11 @@ PLIST="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>${Q3E_VERSION}</string>
+    <string>${OMG_VERSION}</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>${Q3E_VERSION}</string>
+    <string>${OMG_VERSION}</string>
     <key>CGDisableCoalescedUpdates</key>
     <true/>
     <key>LSMinimumSystemVersion</key>
@@ -271,7 +288,7 @@ PLIST="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 PLIST="${PLIST}
     <key>NSHumanReadableCopyright</key>
-    <string>QUAKE III ARENA Copyright © 1999-2000 id Software, Inc. All rights reserved.</string>
+    <string>OmegA Copyright © 2021-2023 Ekip, Inc. All rights reserved.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>NSHighResolutionCapable</key>
@@ -313,5 +330,11 @@ function action()
 #
 
 # executables
-action "${BUNDLEBINDIR}/${EXECUTABLE_NAME}"				"${Q3E_CLIENT_ARCHS}"
-action "${BUNDLEBINDIR}/${DEDICATED_NAME}"				"${Q3E_SERVER_ARCHS}"
+action "${BUNDLEBINDIR}/${EXECUTABLE_NAME}"				"${OMG_CLIENT_ARCHS}"
+#action "${BUNDLEBINDIR}/${DEDICATED_NAME}"				"${OMG_SERVER_ARCHS}"
+
+# renderers
+action "${BUNDLEBINDIR}/${RENDERER_OPENGL1_NAME}" "${OMG_RENDERER_GL1_ARCHS}"
+action "${BUNDLEBINDIR}/${RENDERER_VULKAN_NAME}" "${OMG_RENDERER_VK_ARCHS}"
+symlinkArch "${RENDERER_OPENGL}" "${RENDERER_OPENGL}" "_" "${BUNDLEBINDIR}"
+symlinkArch "${RENDERER_VULKAN}" "${RENDERER_VULKAN}" "_" "${BUNDLEBINDIR}"
