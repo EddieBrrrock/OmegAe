@@ -218,7 +218,7 @@ RCDIR=$(MOUNT_DIR)/renderercommon
 R1DIR=$(MOUNT_DIR)/renderer
 RVDIR=$(MOUNT_DIR)/renderervk
 SDLDIR=$(MOUNT_DIR)/sdl
-SDLHDIR=$(MOUNT_DIR)/SDL2
+SDLHDIR=$(MOUNT_DIR)/libsdl/include/SDL2
 
 CMDIR=$(MOUNT_DIR)/qcommon
 UDIR=$(MOUNT_DIR)/unix
@@ -432,16 +432,16 @@ ifdef MINGW
   CLIENT_LDFLAGS=$(LDFLAGS)
 
   ifeq ($(USE_SDL),1)
-    BASE_CFLAGS += -DUSE_LOCAL_HEADERS=1 -I$(SDLHDIR)/include
+    BASE_CFLAGS += -DUSE_LOCAL_HEADERS=1 -I$(SDLHDIR)
     #CLIENT_CFLAGS += -DUSE_LOCAL_HEADERS=1
     ifeq ($(ARCH),x86)
-      CLIENT_LDFLAGS += -L$(MOUNT_DIR)/libs/windows/mingw/lib32
+      CLIENT_LDFLAGS += -L$(MOUNT_DIR)/libsdl/windows/mingw/lib32
       CLIENT_LDFLAGS += -lSDL2
-      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libs/windows/mingw/lib32/SDL2.dll
+      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libsdl/windows/mingw/lib32/SDL2.dll
     else
-      CLIENT_LDFLAGS += -L$(MOUNT_DIR)/libs/windows/mingw/lib64
+      CLIENT_LDFLAGS += -L$(MOUNT_DIR)/libsdl/windows/mingw/lib64
       CLIENT_LDFLAGS += -lSDL264
-      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libs/windows/mingw/lib64/SDL264.dll
+      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libsdl/windows/mingw/lib64/SDL264.dll
     endif
   endif
 
@@ -499,8 +499,8 @@ ifeq ($(COMPILE_PLATFORM),darwin)
   endif
 
   ifeq ($(USE_LOCAL_HEADERS),1)
-    MACLIBSDIR=$(MOUNT_DIR)/libs/macosx
-    BASE_CFLAGS += -I$(SDLHDIR)/include
+    MACLIBSDIR=$(MOUNT_DIR)/libsdl/macosx
+    BASE_CFLAGS += -I$(SDLHDIR)
     CLIENT_LDFLAGS += $(MACLIBSDIR)/libSDL2-2.0.0.dylib
     CLIENT_EXTRA_FILES += $(MACLIBSDIR)/libSDL2-2.0.0.dylib
   else
