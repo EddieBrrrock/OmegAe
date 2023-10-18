@@ -84,6 +84,8 @@ endif
 
 ifeq ($(COMPILE_PLATFORM),darwin)
   USE_SDL=1
+  USE_LOCAL_HEADERS=1
+  USE_RENDERER_DLOPEN = 0
 endif
 
 ifeq ($(COMPILE_PLATFORM),cygwin)
@@ -237,12 +239,25 @@ INSTALL=install
 MKDIR=mkdir -p
 
 ifneq ($(call bin_path, $(PKG_CONFIG)),)
-  OPENAL_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I openal)
-  OPENAL_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs openal)
-  SDL_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I sdl2)
-  SDL_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs sdl2)
-  X11_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I x11)
-  X11_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs x11)
+  ifneq ($(USE_SDL),0)
+    SDL_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I sdl2)
+    SDL_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs sdl2)
+  else
+    X11_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I x11)
+    X11_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs x11)
+  endif
+  ifeq ($(USE_SYSTEM_OGG),1)
+    OGG_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags ogg || true)
+    OGG_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs ogg || echo -logg)
+  endif
+  ifeq ($(USE_SYSTEM_VORBIS),1)
+    VORBIS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags vorbisfile || true)
+    VORBIS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs vorbisfile || echo -lvorbisfile)
+  endif
+  ifeq ($(USE_OPENAL),1)
+    OPENAL_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I openal)
+    OPENAL_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs openal)-lvorbisfile)
+  endif
 else
   # assume they're in the system default paths (no -I or -L needed)
   OPENAL_LIBS ?= -lopenal
@@ -256,7 +271,25 @@ ifeq ($(X11_LIBS),)
 X11_LIBS = -lX11
 endif
 ifeq ($(SDL_LIBS),)
-SDL_LIBS = -lSDL2
+  SDL_LIBS = -lSDL2
+endif
+
+# supply some reasonable defaults for ogg/vorbis
+ifeq ($(OGG_FLAGS),)
+  OGG_FLAGS = -I$(OGGDIR)/include
+endif
+ifeq ($(VORBIS_FLAGS),)
+  VORBIS_FLAGS = -I$(VORBISDIR)/include -I$(VORBISDIR)/lib
+endif
+ifeq ($(USE_SYSTEM_OGG),1)
+  ifeq ($(OGG_LIBS),)
+    OGG_LIBS = -logg
+  endif
+endif
+ifeq ($(USE_SYSTEM_VORBIS),1)
+  ifeq ($(VORBIS_LIBS),)
+    VORBIS_LIBS = -lvorbisfile
+  endif
 endif
 
 # extract version info
@@ -477,6 +510,8 @@ ifeq ($(COMPILE_PLATFORM),darwin)
   SHLIBEXT = dylib
   SHLIBCFLAGS = -fPIC -fvisibility=hidden
   SHLIBLDFLAGS = -dynamiclib $(LDFLAGS)
+
+  ARCHEXT = .$(ARCH)
 
   LDFLAGS =
 

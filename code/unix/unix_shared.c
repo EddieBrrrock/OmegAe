@@ -415,10 +415,6 @@ const char *Sys_Pwd( void )
 }
 
 
-// Used to determine where to store user-specific files
-static char homePath[ MAX_OSPATH ] = { 0 };
-
-
 /*
 =================
 Sys_DefaultHomePath

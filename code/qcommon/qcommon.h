@@ -133,7 +133,9 @@ NET
 
 ==============================================================
 */
+#ifndef DISABLE_IPV6
 #define USE_IPV6
+#endif
 
 #define NET_ENABLEV4            0x01
 #define NET_ENABLEV6            0x02
@@ -1307,11 +1309,8 @@ const char *Sys_DefaultBasePath( void );
 const char *Sys_SteamPath( void );
 
 #ifdef __APPLE__
-char    *Sys_DefaultAppPath(void);
+char    *Sys_DefaultAppPath( void );
 #endif
-
-const char *Sys_DefaultHomePath( void );
-const char *Sys_Dirname( char *path );
 
 char **Sys_ListFiles( const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs );
 void Sys_FreeFileList( char **list );
