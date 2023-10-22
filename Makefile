@@ -1,5 +1,5 @@
 
-# Quake3 Unix Makefile
+# OmegA Unix Makefile
 #
 # Nov '98 by Zoid <zoid@idsoftware.com>
 #
@@ -132,7 +132,7 @@ endif
 export CROSS_COMPILING
 
 ifndef DESTDIR
-DESTDIR=/usr/local/games/quake3
+DESTDIR=/usr/local/games/openarena
 endif
 
 ifndef MOUNT_DIR
@@ -779,7 +779,7 @@ endif
 # an informational message, then start building
 targets: makedirs tools
 	@echo ""
-	@echo "Building quake3 in $(B):"
+	@echo "Building omega in $(B):"
 	@echo ""
 	@echo "  VERSION: $(VERSION)"
 	@echo "  PLATFORM: $(PLATFORM)"
