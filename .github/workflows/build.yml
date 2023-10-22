@@ -130,13 +130,13 @@ jobs:
         if-no-files-found: error
         retention-days: 5
 
-  macos-ub2:
-    name: ${{ matrix.btype }} macOS universal2
+  macos:
+    name: ${{ matrix.btype }} macOS ${{ matrix.arch }}
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64]
+        arch: [x86_64, arm64]
         cc: [gcc]
         btype: [Release, Debug]
         include:
@@ -149,7 +149,7 @@ jobs:
     steps:
 
     - name: Install tools
-      run: brew install coreutils pkg-config sdl2
+      run: brew install coreutils pkg-config
 
     - uses: actions/checkout@v3.1.0
       with:
@@ -158,19 +158,19 @@ jobs:
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
-        ./make-macosx-ub2.sh
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall BUILD_SERVER=0 STRIP=echo OMEGA=0
         
     - uses: actions/upload-artifact@v3.1.1
       if: matrix.cc == 'gcc' && matrix.btype == 'release'
       with:
-        name: release-darwin-universal2
-        path: build/release-darwin-universal2
+        name: release-darwin-${{ matrix.arch }}
+        path: bin
         if-no-files-found: error
         retention-days: 5
 
   create-testing:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    needs: [windows-msys, ubuntu-x86, macos-ub2]
+    needs: [windows-msys, ubuntu-x86, macos]
     runs-on: ubuntu-20.04
     steps:
       - name: Download Artifacts
@@ -178,13 +178,12 @@ jobs:
 
       - name: Create binary archives
         run: |
-          7z a -r omega-engine-linux-x86.zip      ./release-linux-x86
-          7z a -r omega-engine-linux-x86_64.zip   ./release-linux-x86_64
-          7z a -r omega-engine-windows-x86.zip    ./release-mingw64-x86
-          7z a -r omega-engine-windows-x86_64.zip ./release-mingw64-x86_64
-          chmod -R +x release-darwin-universal2
-          7z a -r omega-engine-macos-universal2.zip   ./release-darwin-universal2
-
+          7z a -r omega-engine-linux-x86.zip		      ./release-linux-x86
+          7z a -r omega-engine-linux-x86_64.zip		    ./release-linux-x86_64
+          7z a -r omega-engine-windows-x86.zip       	./release-mingw64-x86
+          7z a -r omega-engine-windows-x86_64.zip    	./release-mingw64-x86_64
+          7z a -r omega-engine-macos-x86_64.zip      	./release-darwin-x86_64
+          7z a -r omega-engine-macos-arm64.zip       	./release-darwin-arm64
       - name: Create latest build
         uses: marvinpinto/action-automatic-releases@latest
         with:
