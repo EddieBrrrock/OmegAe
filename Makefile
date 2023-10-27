@@ -41,7 +41,10 @@ USE_VULKAN       = 1
 USE_OPENGL       = 1
 USE_OPENGL_API   = 1
 USE_VULKAN_API   = 1
-USE_RENDERER_DLOPEN = 1
+
+ifndef USE_RENDERER_DLOPEN
+USE_RENDERER_DLOPEN=0
+endif
 
 ifndef USE_SDL
 USE_SDL=1
@@ -83,6 +86,7 @@ endif
 -include Makefile.local
 
 ifeq ($(COMPILE_PLATFORM),darwin)
+  USE_RENDERER_DLOPEN=1
   USE_SDL=1
 endif
 
