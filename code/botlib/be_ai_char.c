@@ -491,7 +491,7 @@ static int BotLoadCachedCharacter(const char *charfile, float skill, int reload)
 		cachedhandle = BotFindCachedCharacter(charfile, skill);
 		if (cachedhandle)
 		{
-			botimport.Print(PRT_MESSAGE, "loaded cached skill %f from %s\n", skill, charfile);
+			//botimport.Print(PRT_MESSAGE, "loaded cached skill %f from %s\n", skill, charfile);
 			return cachedhandle;
 		} //end if
 	} //end else
@@ -503,7 +503,7 @@ static int BotLoadCachedCharacter(const char *charfile, float skill, int reload)
 	{
 		botcharacters[handle] = ch;
 		//
-		botimport.Print(PRT_MESSAGE, "loaded skill %d from %s\n", intskill, charfile);
+		//botimport.Print(PRT_MESSAGE, "loaded skill %d from %s\n", intskill, charfile);
 #ifdef DEBUG
 		if (botDeveloper)
 		{
