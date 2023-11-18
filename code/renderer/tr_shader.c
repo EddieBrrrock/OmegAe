@@ -1750,7 +1750,7 @@ static qboolean ParseShader( const char **text )
 
 	numStages = 0;
 
-	s_extendedShader = (*text >= s_extensionOffset);
+	//s_extendedShader = (*text >= s_extensionOffset);
 
 	token = COM_ParseExt( text, qtrue );
 	if ( token[0] != '{' )
@@ -3421,117 +3421,6 @@ void	R_ShaderList_f (void) {
 }
 
 
-#define	MAX_SHADER_FILES 16384
-
-static int loadShaderBuffers( char **shaderFiles, const int numShaderFiles, char **buffers )
-{
-	char filename[MAX_QPATH+8];
-	char shaderName[MAX_QPATH];
-	const char *p, *token;
-	long summand, sum = 0;
-	int shaderLine;
-	int i;
-	const char *shaderStart;
-	qboolean denyErrors;
-
-	// load and parse shader files
-	for ( i = 0; i < numShaderFiles; i++ )
-	{
-		Com_sprintf( filename, sizeof( filename ), "scripts/%s", shaderFiles[i] );
-		//ri.Printf( PRINT_DEVELOPER, "...loading '%s'\n", filename );
-		summand = ri.FS_ReadFile( filename, (void **)&buffers[i] );
-
-		if ( !buffers[i] )
-			ri.Error( ERR_DROP, "Couldn't load %s", filename );
-
-		// comment some buggy shaders from pak0
-		if ( summand == 35910 && strcmp( shaderFiles[i], "sky.shader" ) == 0 )
-		{
-			if ( memcmp( buffers[i] + 0x3D3E, "\tcloudparms ", 12 ) == 0 )
-			{
-				memcpy( buffers[i] + 0x27D7, "/*", 2 );
-				memcpy( buffers[i] + 0x2A93, "*/", 2 );
-
-				memcpy( buffers[i] + 0x3CA9, "/*", 2 );
-				memcpy( buffers[i] + 0x3FC2, "*/", 2 );
-			}
-		}
-		else if ( summand == 116073 && strcmp( shaderFiles[i], "sfx.shader" ) == 0 )
-		{
-			if ( memcmp( buffers[i] + 93457, "textures/sfx/xfinalfog\r\n", 24 ) == 0 )
-			{
-				memcpy( buffers[i] + 93457, "/*", 2 );
-				memcpy( buffers[i] + 93663, "*/", 2 );
-			}
-		}
-
-		p = buffers[i];
-		COM_BeginParseSession( filename );
-
-		shaderStart = NULL;
-		denyErrors = qfalse;
-
-		while ( 1 )
-		{
-			token = COM_ParseExt( &p, qtrue );
-
-			if ( !*token )
-				break;
-
-			Q_strncpyz( shaderName, token, sizeof( shaderName ) );
-			shaderLine = COM_GetCurrentParseLine();
-
-			token = COM_ParseExt( &p, qtrue );
-			if ( token[0] != '{' || token[1] != '\0' )
-			{
-				ri.Printf( PRINT_DEVELOPER, "File %s: shader \"%s\" " \
-					"on line %d missing opening brace", filename, shaderName, shaderLine );
-				if ( token[0] )
-					ri.Printf( PRINT_DEVELOPER, " (found \"%s\" on line %d)\n", token, COM_GetCurrentParseLine() );
-				else
-					ri.Printf( PRINT_DEVELOPER, "\n" );
-
-				if ( denyErrors || !p )
-				{
-					ri.Printf( PRINT_WARNING, "Ignoring entire file '%s' due to error.\n", filename );
-					ri.FS_FreeFile( buffers[i] );
-					buffers[i] = NULL;
-					break;
-				}
-
-				SkipRestOfLine( &p );
-				shaderStart = p;
-				continue;
-			}
-
-			if ( !SkipBracedSection( &p, 1 ) )
-			{
-				ri.Printf(PRINT_WARNING, "WARNING: Ignoring shader file %s. Shader \"%s\" " \
-					"on line %d missing closing brace.\n", filename, shaderName, shaderLine );
-				ri.FS_FreeFile( buffers[i] );
-				buffers[i] = NULL;
-				break;
-			}
-
-			denyErrors = qtrue;
-		}
-
-		if ( buffers[ i ] ) {
-			if ( shaderStart ) {
-				summand -= (shaderStart - buffers[i]);
-				if ( summand >= 0 ) {
-					memmove( buffers[i], shaderStart, summand + 1 );
-				}
-			}
-			//sum += summand;
-			sum += COM_Compress( buffers[ i ] );
-		}
-	}
-
-	return sum;
-}
-
-
 /*
 ====================
 ScanAndLoadShaderFiles
@@ -3540,6 +3429,7 @@ Finds and loads all .shader files, combining them into
 a single large text block that can be scanned for shader names
 =====================
 */
+#define	MAX_SHADER_FILES	4096
 static void ScanAndLoadShaderFiles( void )
 {
 	char **shaderFiles;
