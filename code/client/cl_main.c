@@ -78,6 +78,7 @@ cvar_t	*vid_ypos;			// Y coordinate of window position
 cvar_t	*r_noborder;
 
 cvar_t *r_allowSoftwareGL;	// don't abort out if the pixelformat claims software
+cvar_t *r_allowResize;		// make window resizable
 cvar_t *r_swapInterval;
 cvar_t *r_glDriver;
 cvar_t *r_displayRefresh;
@@ -3777,6 +3778,7 @@ static void CL_InitGLimp_Cvars( void )
 	// shared with GLimp
 	r_allowSoftwareGL = Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
 	Cvar_SetDescription( r_allowSoftwareGL, "Toggle the use of the default software OpenGL driver supplied by the Operating System." );
+	r_allowResize = Cvar_Get( "r_allowResize", "1", CVAR_LATCH );
 	r_swapInterval = Cvar_Get( "r_swapInterval", "0", CVAR_ARCHIVE_ND );
 	Cvar_SetDescription( r_swapInterval, "V-blanks to wait before swapping buffers.\n 0: No V-Sync\n 1: Synced to the monitor's refresh rate." );
 	r_glDriver = Cvar_Get( "r_glDriver", OPENGL_DRIVER_NAME, CVAR_ARCHIVE_ND | CVAR_LATCH );
@@ -3803,7 +3805,12 @@ static void CL_InitGLimp_Cvars( void )
 	r_modeFullscreen = Cvar_Get( "r_modeFullscreen", "", CVAR_ARCHIVE | CVAR_LATCH );
 	Cvar_SetDescription( r_modeFullscreen, "Dedicated fullscreen mode, set to \"\" to use \\r_mode in all cases." );
 
+#ifdef MACOS_X
+	// Mac OS X fullscreen is buggy and doesn't support "ALT+TAB", r_allowResize is preferable
+	r_fullscreen = Cvar_Get( "r_fullscreen", "0", CVAR_ARCHIVE | CVAR_LATCH );
+#else
 	r_fullscreen = Cvar_Get( "r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH );
+#endif
 	Cvar_SetDescription( r_fullscreen, "Fullscreen mode. Set to 0 for windowed mode." );
 	r_customPixelAspect = Cvar_Get( "r_customPixelAspect", "1", CVAR_ARCHIVE_ND | CVAR_LATCH );
 	Cvar_SetDescription( r_customPixelAspect, "Enables custom aspect of the screen, with \\r_mode -1." );

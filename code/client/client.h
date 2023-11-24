@@ -422,6 +422,7 @@ extern	cvar_t	*vid_ypos;
 extern	cvar_t	*r_noborder;
 
 extern	cvar_t	*r_allowSoftwareGL;
+extern	cvar_t	*r_allowResize;
 extern	cvar_t	*r_swapInterval;
 extern	cvar_t	*r_glDriver;
 
