@@ -434,9 +434,9 @@ const char *Sys_DefaultHomePath( void )
 	{
 		Q_strncpyz( homePath, p, sizeof( homePath ) );
 #ifdef MACOS_X
-		Q_strcat( homePath, sizeof(homePath), "/Library/Application Support/OpenArena" );
+		Q_strcat( homePath, sizeof(homePath), HOMEPATH_NAME_MACOSX );
 #else
-		Q_strcat( homePath, sizeof( homePath ), "/.openarena" );
+		Q_strcat( homePath, sizeof( homePath ), HOMEPATH_NAME_UNIX );
 #endif
 		if ( mkdir( homePath, 0750 ) ) 
 		{
