@@ -34,22 +34,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CONSOLE_WINDOW_TITLE  "OmegA Console"
 // 1.32 released 7-10-2002
 
-#ifdef OMEGA
-  #define DEFAULT_GAME			"omega"
-#elif RATMOD
-  #define DEFAULT_GAME			"rat"
-#elif AFTERSHOCK
-  #define DEFAULT_GAME			"aftershock"
+#ifndef QUAKE3
+  #ifdef OMEGA
+    #define DEFAULT_GAME			"omega"
+  #elif RATMOD
+    #define DEFAULT_GAME			"rat"
+  #elif AFTERSHOCK
+    #define DEFAULT_GAME			"aftershock"
+  #endif
 #endif
 
-#define BASEGAME				"baseoa"
+#ifdef QUAKE3
+  #define BASEGAME				"baseq3"
+  #define HOMEPATH_NAME_UNIX        		".q3a"
+  #define HOMEPATH_NAME_WIN         		"Quake3"
+  #define HOMEPATH_NAME_MACOSX			"/Library/Application Support/Quake3"
+#else
+  #define BASEGAME				"baseoa"
+  #define HOMEPATH_NAME_UNIX        		".openarena"
+  #define HOMEPATH_NAME_WIN         		"OpenArena"
+  #define HOMEPATH_NAME_MACOSX			"/Library/Application Support/OpenArena"
+#endif
 //#define BASEDEMO				"demoq3"
 #define BASETA					"missionpack"
 //#define STEAMPATH_NAME			"Quake 3 Arena"
 //#define STEAMPATH_APPID			"2200"
-#define HOMEPATH_NAME_UNIX        		".openarena"
-#define HOMEPATH_NAME_WIN         		"OpenArena"
-#define HOMEPATH_NAME_MACOSX			HOMEPATH_NAME_WIN
 
 #define MAX_TEAMNAME            32
 #define MAX_MASTER_SERVERS      5	// number of supported master servers

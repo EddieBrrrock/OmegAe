@@ -61,8 +61,13 @@ endif
 # valid options: opengl, vulkan
 RENDERER_DEFAULT = opengl
 
-CNAME            = omega
-DNAME            = omg_ded
+ifeq ($(QUAKE3),1)
+  CNAME            = q3-omega
+  DNAME            = q3-omgded
+else
+  CNAME            = omega
+  DNAME            = omgded
+endif
 
 RENDERER_PREFIX  = renderer
 
@@ -136,7 +141,11 @@ endif
 export CROSS_COMPILING
 
 ifndef DESTDIR
-DESTDIR=/usr/local/games/openarena
+  ifeq ($(QUAKE3),1)
+    DESTDIR=/usr/local/games/quake3
+  else
+    DESTDIR=/usr/local/games/openarena
+  endif
 endif
 
 ifndef MOUNT_DIR
@@ -375,6 +384,10 @@ ifeq ($(AFTERSHOCK),1)
   BASE_CFLAGS += -DAFTERSHOCK
 endif
 
+ifeq ($(QUAKE3),1)
+  BASE_CFLAGS += -DQUAKE3
+endif
+
 ARCHEXT=
 
 CLIENT_EXTRA_FILES=
@@ -444,11 +457,11 @@ ifdef MINGW
   endif
 
   ifeq ($(ARCH),x86_64)
-    ARCHEXT = .x64
     BASE_CFLAGS += -m64
     OPTIMIZE = -O2 -ffast-math -fstrength-reduce
   endif
   ifeq ($(ARCH),x86)
+    ARCHEXT = -x86
     BASE_CFLAGS += -m32
     OPTIMIZE = -O2 -march=i586 -mtune=i686 -ffast-math -fstrength-reduce
   endif
@@ -513,7 +526,7 @@ ifeq ($(COMPILE_PLATFORM),darwin)
   SHLIBCFLAGS = -fPIC -fvisibility=hidden
   SHLIBLDFLAGS = -dynamiclib $(LDFLAGS)
 
-  ARCHEXT = .$(ARCH)
+  ARCHEXT = -osx-$(ARCH)
 
   LDFLAGS =
 
@@ -574,7 +587,7 @@ else
   OPTIMIZE = -O2 -fvisibility=hidden
 
   ifeq ($(ARCH),x86_64)
-    ARCHEXT = .x64
+    ARCHEXT = -x64
   else
   ifeq ($(ARCH),x86)
     OPTIMIZE += -march=i586 -mtune=i686
@@ -583,11 +596,11 @@ else
 
   ifeq ($(ARCH),arm)
     OPTIMIZE += -march=armv7-a
-    ARCHEXT = .arm
+    ARCHEXT = -arm
   endif
 
   ifeq ($(ARCH),arm64)
-    ARCHEXT = .arm64
+    ARCHEXT = -arm64
   endif
 
   SHLIBEXT = so
