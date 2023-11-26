@@ -64,6 +64,8 @@ static cvar_t *j_up_axis;
 
 static cvar_t *cl_consoleKeys;
 
+static int vidRestartTime = 0;
+
 static int in_eventTime = 0;
 static qboolean mouse_focus;
 
@@ -1263,6 +1265,35 @@ void HandleEvents( void )
 #endif
 				switch ( e.window.event )
 				{
+					case SDL_WINDOWEVENT_RESIZED:
+					{
+						int width, height;
+
+						width = e.window.data1;
+						height = e.window.data2;
+
+						// ignore this event on fullscreen
+						if( cls.glconfig.isFullscreen )
+						{
+							break;
+						}
+
+						// check if size actually changed
+						if( cls.glconfig.vidWidth == width && cls.glconfig.vidHeight == height )
+						{
+							break;
+						}
+
+						Cvar_SetValue( "r_customwidth", width );
+						Cvar_SetValue( "r_customheight", height );
+						Cvar_Set( "r_mode", "-1" );
+
+						// Wait until user stops dragging for 1 second, so
+						// we aren't constantly recreating the GL context while
+						// he tries to drag...
+						vidRestartTime = Sys_Milliseconds( ) + 1000;
+					}
+					break;
 					case SDL_WINDOWEVENT_MOVED:
 						if ( gw_active && !gw_minimized && !glw_state.isFullscreen ) {
 							Cvar_SetIntegerValue( "vid_xpos", e.window.data1 );
@@ -1323,22 +1354,25 @@ void IN_Frame( void )
 		// running on the desktop with multimonitor configuration
 		if ( !glw_state.isFullscreen || glw_state.monitorCount > 1 ) {
 			IN_DeactivateMouse();
-			return;
 		}
-	}
-
-	if ( !gw_active || !mouse_focus || in_nograb->integer ) {
+	} else if ( !gw_active || !mouse_focus || in_nograb->integer ) {
 		IN_DeactivateMouse();
-		return;
+	} else {
+		IN_ActivateMouse();
 	}
-
-	IN_ActivateMouse();
 
 	//IN_ProcessEvents();
 	//HandleEvents();
 
 	// Set event time for next frame to earliest possible time an event could happen
 	//in_eventTime = Sys_Milliseconds();
+
+	// In case we had to delay actual restart of video system
+	if( ( vidRestartTime != 0 ) && ( vidRestartTime < Sys_Milliseconds( ) ) )
+	{
+		vidRestartTime = 0;
+		Cbuf_AddText( "vid_restart\n" );
+	}
 }
 
 
