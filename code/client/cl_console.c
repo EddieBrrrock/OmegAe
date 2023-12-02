@@ -302,7 +302,14 @@ void Con_CheckResize( void )
 		return;
 	}
 
-	scale = (cls.glconfig.vidHeight / 480) * con_scale->value;
+	if ( cls.glconfig.vidWidth == 0 ) // video hasn't been initialized yet
+	{
+		scale = con_scale->value;
+	}
+	else
+	{
+		scale = (cls.glconfig.vidHeight / 480) * con_scale->value;
+	}
 
 	con.viswidth = cls.glconfig.vidWidth;
 
