@@ -48,12 +48,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define BASEGAME				"baseq3"
   #define HOMEPATH_NAME_UNIX        		".q3a"
   #define HOMEPATH_NAME_WIN         		"Quake3"
-  #define HOMEPATH_NAME_MACOSX			"/Library/Application Support/Quake3"
+  #define HOMEPATH_NAME_MACOSX			"Library/Application Support/Quake3"
 #else
   #define BASEGAME				"baseoa"
   #define HOMEPATH_NAME_UNIX        		".openarena"
   #define HOMEPATH_NAME_WIN         		"OpenArena"
-  #define HOMEPATH_NAME_MACOSX			"/Library/Application Support/OpenArena"
+  #define HOMEPATH_NAME_MACOSX			"Library/Application Support/OpenArena"
 #endif
 //#define BASEDEMO				"demoq3"
 #define BASETA					"missionpack"

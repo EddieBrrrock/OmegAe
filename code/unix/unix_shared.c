@@ -432,9 +432,9 @@ const char *Sys_DefaultHomePath( void )
             
 	if ( (p = getenv("HOME")) != NULL ) 
 	{
-		Q_strncpyz( homePath, p, sizeof( homePath ) );
+		Com_sprintf( homePath, sizeof( homePath ), "%s%c", p, PATH_SEP );
 #ifdef MACOS_X
-		Q_strcat( homePath, sizeof(homePath), HOMEPATH_NAME_MACOSX );
+		Q_strcat( homePath, sizeof( homePath ), HOMEPATH_NAME_MACOSX );
 #else
 		Q_strcat( homePath, sizeof( homePath ), HOMEPATH_NAME_UNIX );
 #endif
