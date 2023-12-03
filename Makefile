@@ -62,10 +62,18 @@ endif
 RENDERER_DEFAULT = opengl
 
 ifeq ($(QUAKE3),1)
-  CNAME            = q3-omega
+  ifeq ($(RENDERER_DEFAULT),vulkan)
+    CNAME            = q3-omega-vulkan
+  else
+    CNAME            = q3-omega
+  endif
   DNAME            = q3-omgded
 else
-  CNAME            = omega
+  ifeq ($(RENDERER_DEFAULT),vulkan)
+    CNAME            = omega-vulkan
+  else
+    CNAME            = omega
+  endif
   DNAME            = omgded
 endif
 
