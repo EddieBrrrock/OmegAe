@@ -1642,7 +1642,7 @@ static void CL_Connect_f( void ) {
 
 	Com_Printf( "%s resolved to %s\n", cls.servername, serverString );
 
-	if( cl_guidServerUniq->integer )
+	if( cl_guidServerUniq->integer && !Q_stricmp( Cvar_VariableString( "fs_game" ), "CTF" ) && !Q_stricmp( Cvar_VariableString( "fs_game" ), "fm" ) )
 		CL_UpdateGUID( serverString, strlen( serverString ) );
 	else
 		CL_UpdateGUID( NULL, 0 );
@@ -3963,7 +3963,7 @@ void CL_Init( void ) {
 	cl_lanForcePackets = Cvar_Get( "cl_lanForcePackets", "1", CVAR_ARCHIVE_ND );
 	Cvar_SetDescription( cl_lanForcePackets, "Bypass \\cl_maxpackets for LAN games, send packets every frame." );
 
-	cl_guidServerUniq = Cvar_Get( "cl_guidServerUniq", "0", CVAR_ARCHIVE_ND );
+	cl_guidServerUniq = Cvar_Get( "cl_guidServerUniq", "1", CVAR_ARCHIVE_ND );
 	Cvar_SetDescription( cl_guidServerUniq, "Makes cl_guid unique for each server." );
 
 	cl_dlURL = Cvar_Get( "cl_dlURL", "http://ws.q3df.org/maps/download/%1", CVAR_ARCHIVE_ND );
