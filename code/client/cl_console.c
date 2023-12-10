@@ -82,6 +82,7 @@ cvar_t		*con_conspeed;
 cvar_t		*con_autoclear;
 cvar_t		*con_notifytime;
 cvar_t		*con_scale;
+cvar_t		*con_clock;
 
 int			g_console_field_width;
 
@@ -418,6 +419,8 @@ void Con_Init( void )
 	con_scale = Cvar_Get( "con_scale", "1", CVAR_ARCHIVE_ND );
 	Cvar_CheckRange( con_scale, "0.5", "8", CV_FLOAT );
 	Cvar_SetDescription( con_scale, "Console font size scale." );
+	con_clock = Cvar_Get( "con_clock", "1", CVAR_ARCHIVE_ND );
+	Cvar_SetDescription( con_clock, "Console clock.\n 1: 24-hour clock\n 2: 12-hour clock" );
 
 	Field_Clear( &g_consoleField );
 	g_consoleField.widthInChars = g_console_field_width;
@@ -794,6 +797,10 @@ static void Con_DrawSolidConsole( float frac ) {
 	int				colorIndex;
 	float			yf, wf;
 	char			buf[ MAX_CVAR_VALUE_STRING ], *v[4];
+	qtime_t			qt;
+	char			*time;
+	char			*meridiem;
+	int			hour;
 
 	lines = cls.glconfig.vidHeight * frac;
 	if ( lines <= 0 )
@@ -869,6 +876,25 @@ static void Con_DrawSolidConsole( float frac ) {
 			SCR_DrawSmallChar( con.xadjust + (x+1)*smallchar_width, y, '^' );
 		y -= smallchar_height;
 		row--;
+	}
+
+	//  draw console clock (fx3)
+	if ( con_clock->integer ) {
+		Com_RealTime( &qt );
+		if ( con_clock->integer == 2 ) {
+			if ( qt.tm_hour < 13 ) {
+				meridiem = "AM";
+				hour = qt.tm_hour;
+			} else {
+				meridiem = "PM";
+				hour = qt.tm_hour - 12;
+			}
+			time = va( "%02i:%02i%s", hour, qt.tm_min, meridiem );
+		} else {
+			time = va( "%02i:%02i:%02i", qt.tm_hour, qt.tm_min, qt.tm_sec );
+		}
+
+		SCR_DrawSmallStringExt( cls.glconfig.vidWidth - ( ARRAY_LEN( time ) ) * smallchar_width - 8, 2, time, g_color_table[1], qfalse, qtrue);
 	}
 
 #ifdef USE_CURL
