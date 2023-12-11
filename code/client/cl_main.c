@@ -1538,23 +1538,9 @@ CL_FWDInfo
 ================
 */
 void CL_FWDInfo( void ) {
-	char *fwdrecon, *fwddown;
-
-	fwdrecon = fwddown = "true";
-
-	if ( clc.fwdreconnect == qfalse ) {
-		fwdrecon = "false";
-	}
-	if ( clc.fwddownload == qfalse ) {
-		fwddown = "false";
-	}
-
 	Com_Printf( "------ FWD Info -----\n" );
 	Com_Printf( "cls.servername = %s\n", cls.servername );
-	Com_Printf( "clc.fwd = %s\n", clc.fwd) ;
 	Com_Printf( "cls.fwd_to = %s\n", cls.fwd_to );
-	Com_Printf( "clc.fwdreconnect = %s\n", fwdrecon );
-	Com_Printf( "clc.fwddownload = %s\n", fwddown );
 	Com_Printf( "---- End FWD Info ---\n" );
 }
 
