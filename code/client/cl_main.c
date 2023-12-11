@@ -1582,7 +1582,7 @@ static void CL_Connect_f( void ) {
 	netadr_t	addr;
 	char	buffer[ sizeof( cls.servername ) ];  // same length as cls.servername
 	char	args[ sizeof( cls.servername ) + MAX_CVAR_VALUE_STRING ];
-	const char	*server;
+	char		server[MAX_OSPATH];
 	const char	*serverString;
 	int		len;
 	int		argc;
@@ -1596,7 +1596,7 @@ static void CL_Connect_f( void ) {
 	}
 
 	if ( argc == 2 ) {
-		server = Cmd_Argv(1);
+		Q_strncpyz( server, Cmd_Argv(1), sizeof( server ) );
 	} else {
 		if( !strcmp( Cmd_Argv(1), "-4" ) )
 			family = NA_IP;
@@ -1608,20 +1608,7 @@ static void CL_Connect_f( void ) {
 #else
 			Com_WPrintf( "warning: only -4 as address type understood.\n" );
 #endif
-		server = Cmd_Argv(2);
-	}
-
-	Q_strncpyz( buffer, server, sizeof( buffer ) );
-	server = buffer;
-
-	// skip leading "q3a:/" in connection string
-	if ( !Q_stricmpn( server, "q3a:/", 5 ) ) {
-		server += 5;
-	}
-
-	// skip all slash prefixes
-	while ( *server == '/' ) {
-		server++;
+		Q_strncpyz( server, Cmd_Argv(2), sizeof( server ) );
 	}
 
 	len = strlen( server );
@@ -1629,12 +1616,7 @@ static void CL_Connect_f( void ) {
 		return;
 	}
 
-	// some programs may add ending slash
-	if ( buffer[len-1] == '/' ) {
-		buffer[len-1] = '\0';
-	}
-
-	if ( !*server ) {
+	if ( !server ) {
 		return;
 	}
 
