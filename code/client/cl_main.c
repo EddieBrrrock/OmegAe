@@ -1663,8 +1663,11 @@ static void CL_Connect_f( void ) {
 
 	Q_strncpyz( cls.servername, server, sizeof( cls.servername ) );
 
-	// copy resolved address
-	clc.serverAddress = addr;
+	if ( !NET_StringToAdr( cls.servername, &clc.serverAddress, family ) ) {
+		Com_Printf( "Bad server address\n" );
+		cls.state = CA_DISCONNECTED;
+		return;
+	}
 
 	if (clc.serverAddress.port == 0) {
 		clc.serverAddress.port = BigShort( PORT_SERVER );
