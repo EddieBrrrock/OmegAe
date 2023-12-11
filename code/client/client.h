@@ -240,6 +240,12 @@ typedef struct {
 	char	videoName[MAX_QPATH];
 	int		videoIndex;
 
+	// fx3 forward system
+	qboolean proxinuse;
+	qboolean fwdreconnect;
+	qboolean fwddownload;
+	char fwd[MAX_OSPATH];
+
 	// big stuff at end of structure so most offsets are 15 bits or less
 	netchan_t	netchan;
 
@@ -350,6 +356,8 @@ typedef struct {
 	float		scale;
 	float		biasX;
 	float		biasY;
+
+        char		fwd_to[MAX_OSPATH];
 
 } clientStatic_t;
 

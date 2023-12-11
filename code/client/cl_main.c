@@ -97,6 +97,8 @@ cvar_t *cl_drawBuffer;
 
 //OmegA
 cvar_t *cl_consoleHeight;
+cvar_t *fwd_use;
+cvar_t *fwd_addr;
 
 clientActive_t		cl;
 clientConnection_t	clc;
@@ -1288,6 +1290,10 @@ qboolean CL_Disconnect( qboolean showMainMenu ) {
 
 	CL_UpdateGUID( NULL, 0 );
 
+	clc.proxinuse = qfalse;
+	clc.fwdreconnect = qfalse;
+	clc.fwddownload = qfalse;
+
 	// Cmd_RemoveCommand( "callvote" );
 	Cmd_RemoveCgameCommands();
 
@@ -1520,6 +1526,36 @@ void CL_Disconnect_f( void ) {
 			}
 		}
 	}
+	clc.fwdreconnect = qfalse;
+	clc.fwddownload = qfalse;
+	clc.proxinuse = qfalse;
+}
+
+
+/*
+================
+CL_FWDInfo
+================
+*/
+void CL_FWDInfo( void ) {
+	char *fwdrecon, *fwddown;
+
+	fwdrecon = fwddown = "true";
+
+	if ( clc.fwdreconnect == qfalse ) {
+		fwdrecon = "false";
+	}
+	if ( clc.fwddownload == qfalse ) {
+		fwddown = "false";
+	}
+
+	Com_Printf( "------ FWD Info -----\n" );
+	Com_Printf( "cls.servername = %s\n", cls.servername );
+	Com_Printf( "clc.fwd = %s\n", clc.fwd) ;
+	Com_Printf( "cls.fwd_to = %s\n", cls.fwd_to );
+	Com_Printf( "clc.fwdreconnect = %s\n", fwdrecon );
+	Com_Printf( "clc.fwddownload = %s\n", fwddown );
+	Com_Printf( "---- End FWD Info ---\n" );
 }
 
 
@@ -1612,6 +1648,21 @@ static void CL_Connect_f( void ) {
 	Q_strncpyz( args, Cmd_ArgsFrom( 1 ), sizeof( args ) );
 
 	Cvar_Set( "ui_singlePlayerActive", "0" );
+
+	if ( fwd_use->integer ) {
+		if ( clc.fwdreconnect == qfalse && clc.fwddownload == qfalse ) {
+			Q_strncpyz(cls.fwd_to, server, sizeof(cls.fwd_to));
+			Cvar_Set( "cl_forwardedTo", cls.fwd_to );
+		} else {
+			Cvar_VariableStringBuffer( "cl_forwardedTo", cls.fwd_to, sizeof( cls.fwd_to ) );
+			Cvar_VariableStringBuffer( "cl_currentServerAddress", clc.fwd, sizeof( clc.fwd ) );
+
+			clc.fwddownload  = qfalse;
+			clc.proxinuse = qtrue;
+		}
+		Cbuf_AddText( va( "setu prx %s\n", cls.fwd_to ) );
+		Q_strncpyz( server, fwd_addr->string, sizeof( server ) );
+	}
 
 	// clear any previous "server full" type messages
 	clc.serverMessage[0] = '\0';
@@ -1995,6 +2046,7 @@ static void CL_DownloadsComplete( void ) {
 #ifdef USE_CURL
 	// if we downloaded with cURL
 	if ( clc.cURLUsed ) {
+		clc.fwddownload = qtrue;
 		clc.cURLUsed = qfalse;
 		CL_cURL_Shutdown();
 		if ( clc.cURLDisconnected ) {
@@ -2189,6 +2241,8 @@ void CL_NextDownload( void )
 
 		return;
 	}
+
+	clc.fwdreconnect = qfalse;
 
 	CL_DownloadsComplete();
 }
@@ -2779,6 +2833,13 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 		// NOTE: we may have to add exceptions for auth and update servers
 		if ( (fromserver = NET_CompareAdr( from, &clc.serverAddress )) != qfalse || NET_CompareAdr( from, &rcon_address ) ) {
 			NET_OutOfBandPrint( NS_CLIENT, from, "%s", Cmd_Argv(1) );
+		}
+		if( fwd_use->integer && clc.fwdreconnect == qfalse ) {
+			if ( !Q_stricmp( s, "/reconnect ASAP!" ) ) {
+				clc.fwdreconnect = qtrue;
+				Com_Printf( "forwarder requested a reconnect\n" );
+				Cbuf_AddText( "reconnect\n" );
+			}
 		}
 		return fromserver;
 	}
@@ -3982,6 +4043,8 @@ void CL_Init( void ) {
 	cl_consoleHeight = Cvar_Get( "cl_consoleHeight", "0.5", CVAR_ARCHIVE );
 	Cvar_CheckRange( cl_consoleHeight, "0", "1", CV_FLOAT );
 	Cvar_SetDescription( cl_consoleHeight, "Console height, set as value from 0.0-1.0, use with \\seta to save in config." );
+        fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
+        fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
 
 	// userinfo
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE_ND );
@@ -4042,6 +4105,7 @@ void CL_Init( void ) {
 	Cmd_AddCommand ("stopvideo", CL_StopVideo_f );
 	Cmd_AddCommand ("serverinfo", CL_Serverinfo_f );
 	Cmd_AddCommand ("systeminfo", CL_Systeminfo_f );
+	Cmd_AddCommand ("fwdinfo", CL_FWDInfo );
 
 #ifdef USE_CURL
 	Cmd_AddCommand( "download", CL_Download_f );
@@ -4054,6 +4118,9 @@ void CL_Init( void ) {
 	CL_GenerateQKey();
 	Cvar_Get( "cl_guid", "", CVAR_USERINFO | CVAR_ROM | CVAR_PROTECTED );
 	CL_UpdateGUID( NULL, 0 );
+
+	clc.proxinuse = qfalse;
+	clc.fwdreconnect = qfalse;
 
 	Com_Printf( "----- Client Initialization Complete -----\n" );
 }
@@ -4119,6 +4186,7 @@ void CL_Shutdown( const char *finalmsg, qboolean quit ) {
 	Cmd_RemoveCommand ("stopvideo");
 	Cmd_RemoveCommand ("serverinfo");
 	Cmd_RemoveCommand ("systeminfo");
+        Cmd_RemoveCommand ("fwdinfo");
 	Cmd_RemoveCommand ("modelist");
 
 #ifdef USE_CURL
