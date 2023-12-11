@@ -1647,22 +1647,21 @@ static void CL_Connect_f( void ) {
 	// save arguments for reconnect
 	Q_strncpyz( args, Cmd_ArgsFrom( 1 ), sizeof( args ) );
 
-	Cvar_Set( "ui_singlePlayerActive", "0" );
-
 	if ( fwd_use->integer ) {
 		if ( clc.fwdreconnect == qfalse && clc.fwddownload == qfalse ) {
-			Q_strncpyz(cls.fwd_to, server, sizeof(cls.fwd_to));
+			Q_strncpyz( cls.fwd_to, server, sizeof( cls.fwd_to ) );
 			Cvar_Set( "cl_forwardedTo", cls.fwd_to );
 		} else {
 			Cvar_VariableStringBuffer( "cl_forwardedTo", cls.fwd_to, sizeof( cls.fwd_to ) );
 			Cvar_VariableStringBuffer( "cl_currentServerAddress", clc.fwd, sizeof( clc.fwd ) );
-
 			clc.fwddownload  = qfalse;
 			clc.proxinuse = qtrue;
 		}
 		Cbuf_AddText( va( "setu prx %s\n", cls.fwd_to ) );
 		Q_strncpyz( server, fwd_addr->string, sizeof( server ) );
 	}
+
+	Cvar_Set( "ui_singlePlayerActive", "0" );
 
 	// clear any previous "server full" type messages
 	clc.serverMessage[0] = '\0';
@@ -2834,13 +2833,6 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 		if ( (fromserver = NET_CompareAdr( from, &clc.serverAddress )) != qfalse || NET_CompareAdr( from, &rcon_address ) ) {
 			NET_OutOfBandPrint( NS_CLIENT, from, "%s", Cmd_Argv(1) );
 		}
-		if( fwd_use->integer && clc.fwdreconnect == qfalse ) {
-			if ( !Q_stricmp( s, "/reconnect ASAP!" ) ) {
-				clc.fwdreconnect = qtrue;
-				Com_Printf( "forwarder requested a reconnect\n" );
-				Cbuf_AddText( "reconnect\n" );
-			}
-		}
 		return fromserver;
 	}
 
@@ -2863,6 +2855,13 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 			s = MSG_ReadString( msg );
 			Q_strncpyz( clc.serverMessage, s, sizeof( clc.serverMessage ) );
 			Com_Printf( "%s", s );
+		}
+		if( fwd_use->integer && clc.fwdreconnect == qfalse ) {
+			if ( !Q_stricmp( s, "/reconnect ASAP!" ) ) {
+				clc.fwdreconnect = qtrue;
+				Com_Printf( "forwarder requested a reconnect\n" );
+				Cbuf_AddText( "reconnect\n" );
+			}
 		}
 		return fromserver;
 	}
