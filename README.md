@@ -24,6 +24,7 @@ Go to [Releases](../../releases) section to download latest binaries for your pl
 * non-intrusive support for SDL2 backend (video, audio, input), selectable at compile time
 * OpenAL sound API support (multiple speaker support and better sound quality)
 * Optional Ogg Vorbis support
+* [QWFWD](https://www.quakeworld.nu/wiki/QWfwd) proxy support, [list of servers](https://www.quakeservers.net//quakeworld/servers/t=proxy/)
 * tons of bug fixes and other improvements
 
 ## Vulkan renderer
