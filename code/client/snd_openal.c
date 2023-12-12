@@ -2274,6 +2274,19 @@ void S_AL_Update( void )
 {
 	int i;
 
+	if(!(gw_minimized && s_muteWhenMinimized->integer) &&
+		!(!gw_active && !gw_minimized && s_muteWhenUnfocused->integer))
+	{
+		s_muted->integer = qfalse;
+		s_muted->modified = qtrue;
+	}
+	else if ((gw_minimized && s_muteWhenMinimized->integer) ||
+		(!gw_active && !gw_minimized && s_muteWhenUnfocused->integer))
+	{
+		s_muted->integer = qtrue;
+		s_muted->modified = qtrue;
+	}
+
 	if(s_muted->modified)
 	{
 		// muted state changed. Let S_AL_Gain turn up all sources again.
