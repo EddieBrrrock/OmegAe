@@ -113,15 +113,8 @@ S_AL_ClearError
 */
 static void S_AL_ClearError( qboolean quiet )
 {
-	int error = qalGetError();
-
 	if( quiet )
 		return;
-//	if(error != AL_NO_ERROR)
-//	{
-//		Com_Printf(S_COLOR_YELLOW "WARNING: unhandled AL error: %s\n",
-//			S_AL_ErrorMsg(error));
-//	}
 }
 
 
@@ -1235,7 +1228,7 @@ S_AL_StartSound
 Play a one-shot sound effect
 =================
 */
-static void S_AL_StartSound( vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx )
+static void S_AL_StartSound( const vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx )
 {
 	vec3_t sorigin;
 	srcHandle_t src;
@@ -2273,19 +2266,6 @@ static
 void S_AL_Update( void )
 {
 	int i;
-
-	if(!(gw_minimized && s_muteWhenMinimized->integer) &&
-		!(!gw_active && !gw_minimized && s_muteWhenUnfocused->integer))
-	{
-		s_muted->integer = qfalse;
-		s_muted->modified = qtrue;
-	}
-	else if ((gw_minimized && s_muteWhenMinimized->integer) ||
-		(!gw_active && !gw_minimized && s_muteWhenUnfocused->integer))
-	{
-		s_muted->integer = qtrue;
-		s_muted->modified = qtrue;
-	}
 
 	if(s_muted->modified)
 	{

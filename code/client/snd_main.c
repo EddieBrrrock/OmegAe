@@ -124,11 +124,11 @@ void S_StopBackgroundTrack( void )
 S_RawSamples
 =================
 */
-void S_RawSamples (int samples, int rate, int width, int channels,
-		   const byte *data, float volume)
+void S_RawSamples (int stream, int samples, int rate, int width, int channels,
+		   const byte *data, float volume, int entityNum)
 {
 	if( si.RawSamples ) {
-		si.RawSamples( samples, rate, width, channels, data, volume );
+		si.RawSamples( stream, samples, rate, width, channels, data, volume, entityNum );
 	}
 }
 
@@ -254,7 +254,7 @@ void S_Update( int msec )
 	}
 	
 	if( si.Update ) {
-		si.Update( msec );
+		si.Update();
 	}
 }
 

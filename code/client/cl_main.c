@@ -1566,7 +1566,6 @@ CL_Connect_f
 static void CL_Connect_f( void ) {
 	netadrtype_t family;
 	netadr_t	addr;
-	char	buffer[ sizeof( cls.servername ) ];  // same length as cls.servername
 	char	args[ sizeof( cls.servername ) + MAX_CVAR_VALUE_STRING ];
 	char		server[MAX_OSPATH];
 	const char	*serverString;
@@ -1599,10 +1598,6 @@ static void CL_Connect_f( void ) {
 
 	len = strlen( server );
 	if ( len <= 0 ) {
-		return;
-	}
-
-	if ( !server ) {
 		return;
 	}
 

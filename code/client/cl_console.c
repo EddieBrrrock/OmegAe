@@ -480,7 +480,7 @@ static void Con_Fixup( void )
 
 /*
 ===============
-Con_Linefeed
+Con_NewLine
 
 Move to newline only when we _really_ need this
 ===============
@@ -798,7 +798,7 @@ static void Con_DrawSolidConsole( float frac ) {
 	float			yf, wf;
 	char			buf[ MAX_CVAR_VALUE_STRING ], *v[4];
 	qtime_t			qt;
-	char			*time;
+	const char		*time;
 	char			*meridiem;
 	int			hour;
 
@@ -894,7 +894,7 @@ static void Con_DrawSolidConsole( float frac ) {
 			time = va( "%02i:%02i:%02i", qt.tm_hour, qt.tm_min, qt.tm_sec );
 		}
 
-		SCR_DrawSmallStringExt( cls.glconfig.vidWidth - ( ARRAY_LEN( time ) ) * smallchar_width - 8, 2, time, g_color_table[1], qfalse, qtrue);
+		SCR_DrawSmallStringExt( cls.glconfig.vidWidth - ( strlen( time ) ) * smallchar_width - 8, 2, time, g_color_table[1], qfalse, qtrue);
 	}
 
 #ifdef USE_CURL

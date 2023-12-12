@@ -676,6 +676,7 @@ void S_PaintChannels( int endtime ) {
 	static qboolean muted = qfalse;
 	int 	i;
 	int 	end;
+	int 	stream;
 	channel_t *ch;
 	sfx_t	*sc;
 	int		ltime, count;
@@ -712,13 +713,15 @@ void S_PaintChannels( int endtime ) {
 
 		// clear the paint buffer and mix any raw samples...
 		Com_Memset( paintbuffer, 0, sizeof( paintbuffer ) );
-		if ( s_rawend - s_paintedtime >= 0 ) {
-			// copy from the streaming sound source
-			const int stop = (end < s_rawend) ? end : s_rawend;
-			for ( i = s_paintedtime; i < stop; i++ ) {
-				const int s = i&(MAX_RAW_SAMPLES-1);
-				paintbuffer[i-s_paintedtime].left += s_rawsamples[s].left;
-				paintbuffer[i-s_paintedtime].right += s_rawsamples[s].right;
+		for ( stream = 0; stream < MAX_RAW_STREAMS; stream++ ) {
+			if ( s_rawend[stream] - s_paintedtime >= 0 ) {
+				// copy from the streaming sound source
+				const int stop = (end < s_rawend[stream]) ? end : s_rawend[stream];
+				for ( i = s_paintedtime; i < stop; i++ ) {
+					const int s = i&(MAX_RAW_SAMPLES-1);
+					paintbuffer[i-s_paintedtime].left += s_rawsamples[s].left;
+					paintbuffer[i-s_paintedtime].right += s_rawsamples[s].right;
+				}
 			}
 		}
 
