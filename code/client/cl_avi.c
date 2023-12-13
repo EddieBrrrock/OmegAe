@@ -450,7 +450,7 @@ qboolean CL_OpenAVIForWriting( const char *fileName, qboolean pipe, qboolean reo
 	else
 	{
 		afd.audio = qfalse;
-		Com_WPrintf( "WARNING: Audio capture is not supported "
+		Com_Printf( S_COLOR_YELLOW "WARNING: Audio capture is not supported "
 			"with OpenAL. Set s_useOpenAL to 0 for audio capture\n" );
 	}
 
