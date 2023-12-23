@@ -100,7 +100,6 @@ endif
 
 ifeq ($(COMPILE_PLATFORM),darwin)
   USE_RENDERER_DLOPEN=1
-  USE_SDL=1
 endif
 
 ifeq ($(COMPILE_PLATFORM),cygwin)
@@ -114,11 +113,15 @@ export PLATFORM
 
 ifeq ($(PLATFORM),mingw32)
   MINGW=1
-  USE_SDL=0
+  ifeq ($(ARCH),x86)
+    USE_SDL=0
+  endif
 endif
 ifeq ($(PLATFORM),mingw64)
   MINGW=1
-  USE_SDL=0
+  ifeq ($(ARCH),x86)
+    USE_SDL=0
+  endif
 endif
 
 ifeq ($(COMPILE_ARCH),i86pc)
