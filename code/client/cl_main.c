@@ -1658,7 +1658,7 @@ static void CL_Connect_f( void ) {
 
 	Com_Printf( "%s resolved to %s\n", cls.servername, serverString );
 
-	if( cl_guidServerUniq->integer && !Q_stricmp( Cvar_VariableString( "fs_game" ), "CTF" ) && !Q_stricmp( Cvar_VariableString( "fs_game" ), "fm" ) )
+	if( cl_guidServerUniq->integer && strstr( cls.servername, "165.227.171.108" ) == 0 )
 		CL_UpdateGUID( serverString, strlen( serverString ) );
 	else
 		CL_UpdateGUID( NULL, 0 );
