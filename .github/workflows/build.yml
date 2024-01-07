@@ -67,9 +67,9 @@ jobs:
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
         make clean ARCH=${{ matrix.arch }}
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin RENDERER_DEFAULT=opengl
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin RENDERER_DEFAULT=opengl QUAKE3=1
         make clean ARCH=${{ matrix.arch }}
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin RENDERER_DEFAULT=vulkan
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin RENDERER_DEFAULT=vulkan QUAKE3=1
 
     - uses: actions/upload-artifact@v3.1.1
       if: matrix.cc == 'gcc' && matrix.btype == 'release'
@@ -122,9 +122,9 @@ jobs:
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip in Release builds
       run: |
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} RENDERER_DEFAULT=opengl
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} RENDERER_DEFAULT=opengl QUAKE3=1
         make clean ARCH=${{ matrix.arch }} 
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} RENDERER_DEFAULT=vulkan
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} RENDERER_DEFAULT=vulkan QUAKE3=1
 
     - uses: actions/upload-artifact@v3.1.1
       if: matrix.cc == 'gcc' && matrix.btype == 'release'
@@ -162,7 +162,7 @@ jobs:
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall STRIP=echo
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall STRIP=echo QUAKE3=1
         
     - uses: actions/upload-artifact@v3.1.1
       if: matrix.cc == 'gcc' && matrix.btype == 'release'
@@ -182,18 +182,18 @@ jobs:
 
       - name: Create binary archives
         run: |
-          7z a -r omega-engine-linux-x86.zip		      ./release-linux-x86
-          7z a -r omega-engine-linux-x86_64.zip		    ./release-linux-x86_64
-          7z a -r omega-engine-windows-x86.zip       	./release-mingw64-x86
-          7z a -r omega-engine-windows-x86_64.zip    	./release-mingw64-x86_64
-          7z a -r omega-engine-macos-x86_64.zip      	./release-darwin-x86_64
-          7z a -r omega-engine-macos-arm64.zip       	./release-darwin-arm64
+          7z a -r q3-omega-engine-linux-x86.zip				./release-linux-x86
+          7z a -r q3-omega-engine-linux-x86_64.zip		./release-linux-x86_64
+          7z a -r q3-omega-engine-windows-x86.zip			./release-mingw64-x86
+          7z a -r q3-omega-engine-windows-x86_64.zip	./release-mingw64-x86_64
+          7z a -r q3-omega-engine-macos-x86_64.zip		./release-darwin-x86_64
+          7z a -r q3-omega-engine-macos-arm64.zip			./release-darwin-arm64
       - name: Create latest build
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "latest"
+          automatic_release_tag: "q3-omega"
           prerelease: true
-          title: Development Build
+          title: Development Build (Quake3 as default)
           files: |
             *.zip
