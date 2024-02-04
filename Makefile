@@ -483,7 +483,7 @@ ifdef MINGW
 
   BINEXT = .exe
 
-  LDFLAGS = -mwindows -Wl,--dynamicbase -Wl,--nxcompat
+  LDFLAGS += -mwindows -Wl,--dynamicbase -Wl,--nxcompat
   LDFLAGS += -Wl,--gc-sections -fvisibility=hidden
   LDFLAGS += -lwsock32 -lgdi32 -lwinmm -lole32 -lws2_32 -lpsapi -lcomctl32
   LDFLAGS += -flto
@@ -539,15 +539,15 @@ ifeq ($(COMPILE_PLATFORM),darwin)
 
   ARCHEXT = -osx-$(ARCH)
 
-  LDFLAGS =
+  LDFLAGS +=
 
   ifeq ($(ARCH),x86_64)
     BASE_CFLAGS += -arch x86_64
-    LDFLAGS = -arch x86_64
+    LDFLAGS += -arch x86_64
   endif
   ifeq ($(ARCH),arm64)
     BASE_CFLAGS += -arch arm64
-    LDFLAGS = -arch arm64
+    LDFLAGS += -arch arm64
   endif
 
   ifeq ($(USE_OPENAL),1)
@@ -618,7 +618,7 @@ else
   SHLIBCFLAGS = -fPIC -fvisibility=hidden
   SHLIBLDFLAGS = -shared $(LDFLAGS)
 
-  LDFLAGS = -lm
+  LDFLAGS += -lm
   LDFLAGS += -Wl,--gc-sections -fvisibility=hidden
 
   ifeq ($(USE_SDL),1)
