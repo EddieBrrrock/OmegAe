@@ -30,6 +30,7 @@ cvar_t *s_volume;
 cvar_t *s_muted;
 cvar_t *s_musicVolume;
 cvar_t *s_doppler;
+cvar_t *s_backend;
 cvar_t *s_muteWhenMinimized;
 cvar_t *s_muteWhenUnfocused;
 
@@ -440,6 +441,8 @@ void S_Init( void )
 	s_doppler = Cvar_Get( "s_doppler", "1", CVAR_ARCHIVE_ND );
 	Cvar_CheckRange( s_doppler, "0", "1", CV_INTEGER );
 	Cvar_SetDescription( s_doppler, "Enables doppler effect on moving projectiles." );
+	s_backend = Cvar_Get( "s_backend", "", CVAR_ROM );
+	Cvar_SetDescription( s_backend, "Read only, indicates the current sound backend" );
 	s_muteWhenUnfocused = Cvar_Get( "s_muteWhenUnfocused", "1", CVAR_ARCHIVE );
 	Cvar_CheckRange( s_muteWhenUnfocused, "0", "1", CV_INTEGER );
 	Cvar_SetDescription( s_muteWhenUnfocused, "Mutes all audio while game window is unfocused." );
@@ -471,6 +474,7 @@ void S_Init( void )
 
 		if ( !started ) {
 			started = S_Base_Init( &si );
+			Cvar_Set( "s_backend", "base" );
 		}
 
 		if ( started ) {
