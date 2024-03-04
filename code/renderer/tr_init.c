@@ -134,6 +134,7 @@ cvar_t	*r_ext_supersample;
 
 cvar_t	*r_drawBuffer;
 cvar_t	*r_lightmap;
+cvar_t  *r_drawFlat;
 cvar_t	*r_vertexLight;
 cvar_t	*r_shadows;
 cvar_t	*r_flares;
@@ -1674,6 +1675,8 @@ static void R_Register( void )
 	ri.Cvar_SetDescription( r_drawworld, "Set to 0 to disable drawing the world. Set to 1 to enable." );
 	r_lightmap = ri.Cvar_Get ("r_lightmap", "0", 0 );
 	ri.Cvar_SetDescription( r_lightmap, "Show only lightmaps on all world surfaces." );
+	r_drawFlat = ri.Cvar_Get( "r_drawFlat", "0", CVAR_ARCHIVE_ND | CVAR_LATCH );
+	ri.Cvar_SetDescription( r_drawFlat, "Enables flat(untextured) walls/floors." );
 	r_portalOnly = ri.Cvar_Get ("r_portalOnly", "0", CVAR_CHEAT );
 	ri.Cvar_SetDescription( r_portalOnly, "Set to 1 to render only first mirror/portal view if it is present on the scene." );
 

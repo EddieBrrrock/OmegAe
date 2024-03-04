@@ -651,7 +651,10 @@ static void generate_image_upload_data( image_t *image, byte *data, Image_Upload
 	//
 	// perform optional picmip operation
 	//
-	if ( picmip && ( tr.mapLoading || r_nomip->integer == 0 ) ) {
+	if ( r_drawFlat->integer && picmip && tr.mapLoading ) {
+		scaled_width >>= 16;
+		scaled_height >>= 16;
+	} else if ( picmip && ( tr.mapLoading || r_nomip->integer == 0 ) ) {
 		scaled_width >>= r_picmip->integer;
 		scaled_height >>= r_picmip->integer;
 		//x >>= r_picmip->integer;

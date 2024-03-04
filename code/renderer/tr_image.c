@@ -662,7 +662,12 @@ static void Upload32( byte *data, int x, int y, int width, int height, image_t *
 	//
 	// perform optional picmip operation
 	//
-	if ( picmip && ( tr.mapLoading || r_nomip->integer == 0 ) ) {
+	if ( r_drawFlat->integer && picmip && tr.mapLoading ) {
+		scaled_width >>= 16;
+		scaled_height >>= 16;
+		x >>= 16;
+		y >>= 16;
+	} else if ( picmip && ( tr.mapLoading || r_nomip->integer == 0 ) ) {
 		scaled_width >>= r_picmip->integer;
 		scaled_height >>= r_picmip->integer;
 		x >>= r_picmip->integer;

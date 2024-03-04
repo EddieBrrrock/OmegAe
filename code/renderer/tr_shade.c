@@ -298,7 +298,7 @@ static void DrawMultitextured( const shaderCommands_t *input, int stage ) {
 	qglEnable( GL_TEXTURE_2D );
 	R_BindAnimatedImage( &pStage->bundle[1] );
 
-	if ( r_lightmap->integer ) {
+	if ( r_lightmap->integer || r_drawFlat->integer ) {
 		GL_TexEnv( GL_REPLACE );
 	} else {
 		GL_TexEnv( pStage->mtEnv );
@@ -870,7 +870,7 @@ static void RB_IterateStagesGeneric( const shaderCommands_t *input )
 		}
 
 		// allow skipping out to show just lightmaps during development
-		if ( r_lightmap->integer && ( pStage->bundle[0].lightmap != LIGHTMAP_INDEX_NONE || pStage->bundle[1].lightmap != LIGHTMAP_INDEX_NONE ) )
+		if ( ( r_lightmap->integer || r_drawFlat->integer ) && ( pStage->bundle[0].lightmap != LIGHTMAP_INDEX_NONE || pStage->bundle[1].lightmap != LIGHTMAP_INDEX_NONE ) )
 			break;
 	}
 }

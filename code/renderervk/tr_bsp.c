@@ -135,6 +135,10 @@ void R_ColorShiftLightingBytes( const byte in[4], byte out[4], qboolean hasAlpha
 		out[0] = LERP( r, luma, scale );
 		out[1] = LERP( g, luma, scale );
 		out[2] = LERP( b, luma, scale );
+	} else if ( r_drawFlat->integer ) {
+		out[0] = r * 0.5;
+		out[1] = g * 0.5;
+		out[2] = b * 0.5;
 	} else {
 		out[0] = r;
 		out[1] = g;

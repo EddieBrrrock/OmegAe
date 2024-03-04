@@ -347,7 +347,7 @@ static void DrawMultitextured( const shaderCommands_t *input, int stage ) {
 	qglEnable( GL_TEXTURE_2D );
 	R_BindAnimatedImage( &pStage->bundle[1] );
 
-	if ( r_lightmap->integer ) {
+	if ( r_lightmap->integer || r_drawFlat->integer ) {
 		GL_TexEnv( GL_REPLACE );
 	} else {
 		GL_TexEnv( pStage->mtEnv );
@@ -1007,7 +1007,7 @@ static void RB_IterateStagesGeneric( const shaderCommands_t *input )
 
 		GL_SelectTexture( 0 );
 
-		if ( r_lightmap->integer && pStage->bundle[1].lightmap != LIGHTMAP_INDEX_NONE ) {
+		if ( ( r_lightmap->integer || r_drawFlat->integer ) && pStage->bundle[1].lightmap != LIGHTMAP_INDEX_NONE ) {
 			//GL_SelectTexture( 0 );
 			GL_Bind( tr.whiteImage ); // replace diffuse texture with a white one thus effectively render only lightmap
 		}

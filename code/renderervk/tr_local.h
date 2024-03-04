@@ -1364,6 +1364,7 @@ extern	cvar_t	*r_offsetUnits;
 
 extern	cvar_t	*r_fullbright;					// avoid lightmap pass
 extern	cvar_t	*r_lightmap;					// render lightmaps only
+extern  cvar_t  *r_drawFlat;					// render flat textures
 extern	cvar_t	*r_vertexLight;					// vertex lighting mode for better performance
 
 extern	cvar_t	*r_showtris;					// enables wireframe rendering of the world
