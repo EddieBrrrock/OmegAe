@@ -22,14 +22,14 @@ on:
 
 jobs:
   windows-msys:
-    name: ${{ matrix.btype }} Windows-GCC ${{ matrix.arch }}
+    name: ${{ matrix.btype }} Windows ${{ matrix.arch }}
     runs-on: windows-2019
     strategy:
       fail-fast: false
       matrix:
         arch: [x86, x86_64]
         cc: [gcc]
-        btype: [Release, Debug]
+        btype: [Release]
         include:
           - arch: x86
             msystem: mingw32
@@ -41,9 +41,6 @@ jobs:
 
           - btype: Release
             rule: install
-
-          - btype: Debug
-            rule: debug install
 
     defaults:
       run:
@@ -64,7 +61,6 @@ jobs:
         submodules: recursive
 
     - name: Build
-      if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
         make clean ARCH=${{ matrix.arch }}
         make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin RENDERER_DEFAULT=opengl QUAKE3=1
@@ -80,21 +76,17 @@ jobs:
         retention-days: 5
         
   ubuntu-x86:
-    name: ${{ matrix.btype }} Ubuntu ${{ matrix.arch }}
+    name: ${{ matrix.btype }} Unix ${{ matrix.arch }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
         arch: [x86, x86_64]
         cc: [gcc]
-        btype: [Release, Debug]
+        btype: [Release]
         include:
           - btype: Release
             rule: install
-
-          - btype: Debug
-            if: ${{ github.event_name != 'release' }}
-            rule: debug install
 
           - arch: x86
             use_sdl: USE_SDL=0
@@ -120,7 +112,6 @@ jobs:
         submodules: recursive
 
     - name: Build
-      if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip in Release builds
       run: |
         make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} RENDERER_DEFAULT=opengl QUAKE3=1
         make clean ARCH=${{ matrix.arch }} 
@@ -142,13 +133,10 @@ jobs:
       matrix:
         arch: [x86_64, arm64]
         cc: [gcc]
-        btype: [Release, Debug]
+        btype: [Release]
         include:
           - btype: Release
             rule: install
-
-          - btype: Debug
-            rule: debug install
 
     steps:
 
@@ -160,7 +148,6 @@ jobs:
         submodules: recursive
 
     - name: Build
-      if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
         make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall STRIP=echo QUAKE3=1
         
