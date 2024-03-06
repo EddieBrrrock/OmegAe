@@ -1594,7 +1594,7 @@ static void R_Register( void )
 	r_bloom->flags &= ~CVAR_LATCH; // If we were running renderervk before, we need to remove latch
 	ri.Cvar_SetDescription(r_bloom, "Enables bloom post-processing effect. Requires \\r_fbo 1.");
 	r_bloom_threshold = ri.Cvar_Get( "r_bloom_threshold", "0.75", CVAR_ARCHIVE_ND );
-	ri.Cvar_SetDescription(r_bloom_threshold, "Color level to extract to bloom texture, default is 0.6.");
+	ri.Cvar_SetDescription(r_bloom_threshold, "Color level to extract to bloom texture, default is 0.75.");
 	ri.Cvar_SetGroup( r_bloom_threshold, CVG_RENDERER );
 	r_bloom_threshold_mode = ri.Cvar_Get( "r_bloom_threshold_mode", "0", CVAR_ARCHIVE_ND );
 	ri.Cvar_SetDescription( r_bloom_threshold_mode, "Color extraction mode:\n 0: (r|g|b) >= threshold\n 1: (r + g + b ) / 3 >= threshold\n 2: luma(r, g, b) >= threshold" );
