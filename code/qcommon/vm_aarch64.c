@@ -3483,7 +3483,7 @@ __recompile:
 	}
 
 	// clear icache, http://blogs.arm.com/software-enablement/141-caches-and-self-modifying-code/
-	__builtin___clear_cache( vm->codeBase.ptr, vm->codeBase.ptr + vm->codeLength );
+	__clear_cache( vm->codeBase.ptr, vm->codeBase.ptr + vm->codeLength );
 #endif
 
 	vm->destroy = VM_Destroy_Compiled;

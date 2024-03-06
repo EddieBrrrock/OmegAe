@@ -246,8 +246,8 @@ W32DIR=$(MOUNT_DIR)/win32
 BLIBDIR=$(MOUNT_DIR)/botlib
 UIDIR=$(MOUNT_DIR)/ui
 JPDIR=$(MOUNT_DIR)/libjpeg
-OGGDIR=$(MOUNT_DIR)/libogg-1.3.3
-VORBISDIR=$(MOUNT_DIR)/libvorbis-1.3.6
+OGGDIR=$(MOUNT_DIR)/libogg
+VORBISDIR=$(MOUNT_DIR)/libvorbis
 
 bin_path=$(shell which $(1) 2> /dev/null)
 
