@@ -182,6 +182,7 @@ jobs:
 
       - name: Create binary archives
         run: |
+          chmod -R +x *
           7z a -r q3-omega-engine-linux-x86.zip				./release-linux-x86
           7z a -r q3-omega-engine-linux-x86_64.zip		./release-linux-x86_64
           7z a -r q3-omega-engine-windows-x86.zip			./release-mingw64-x86
