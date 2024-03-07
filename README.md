@@ -79,3 +79,8 @@ Performance is usually greater or equal to other opengl1 renderers
 * https://github.com/ioquake/ioq3
 * https://github.com/kennyalive/Quake-III-Arena-Kenny-Edition
 * https://github.com/OpenArena/engine
+
+## Donate
+
+I develop during my freetime, if you enjoyed my engine/fork or my mod please consider supporting me by donating !
+* paypal.me/fatsakura
