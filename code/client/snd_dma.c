@@ -872,8 +872,8 @@ void S_AddLoopSounds( void ) {
 		}
 		
 		ch->master_vol = MASTER_VOL;
-		ch->leftvol = left_total;
-		ch->rightvol = right_total;
+		ch->leftvol = left_total * s_ambientSoundsVolume->value;
+		ch->rightvol = right_total * s_ambientSoundsVolume->value;
 		ch->thesfx = loop->sfx;
 		ch->doppler = loop->doppler;
 		ch->dopplerScale = loop->dopplerScale;
