@@ -507,6 +507,7 @@ static void CL_ParseGamestate( msg_t *msg ) {
 	const char		*s;
 	char			oldGame[ MAX_QPATH ];
 	char			reconnectArgs[ MAX_CVAR_VALUE_STRING ];
+	char			allowDownload[ MAX_CVAR_VALUE_STRING ];
 	qboolean		gamedirModified;
 
 	Con_Close();
@@ -612,18 +613,20 @@ static void CL_ParseGamestate( msg_t *msg ) {
 	// try to keep gamestate and connection state during game switch
 	cls.gameSwitch = gamedirModified;
 
-	// preserve \cl_reconnectAgrs between online game directory changes
+	// preserve \cl_reconnectAgrs and \cl_allowDownload between online game directory changes
 	// so after mod switch \reconnect will not restore old value from config but use new one
 	if ( gamedirModified ) {
 		Cvar_VariableStringBuffer( "cl_reconnectArgs", reconnectArgs, sizeof( reconnectArgs ) );
+		Cvar_VariableStringBuffer( "cl_allowDownload", allowDownload, sizeof( allowDownload ) );
 	}
 
 	// reinitialize the filesystem if the game directory has changed
 	FS_ConditionalRestart( clc.checksumFeed, gamedirModified );
 
-	// restore \cl_reconnectAgrs
+	// restore \cl_reconnectAgrs and \cl_allowDownload
 	if ( gamedirModified ) {
 		Cvar_Set( "cl_reconnectArgs", reconnectArgs );
+		Cvar_Set( "cl_allowDownload", allowDownload );
 	}
 
 	cls.gameSwitch = qfalse;
