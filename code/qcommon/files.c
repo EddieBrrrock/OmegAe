@@ -4715,7 +4715,7 @@ static void FS_Startup( void ) {
 	Cvar_SetDescription( fs_gamedirvar, "Specify an alternate mod directory and run the game with this mod." );
 
 	if ( FS_IsBaseGame( fs_gamedirvar->string ) ) {
-		Cvar_ForceReset( "fs_game" );
+		Cvar_Set( "fs_game", "" );
 	}
 
 	fs_excludeReference = Cvar_Get( "fs_excludeReference", "", CVAR_ARCHIVE_ND | CVAR_LATCH );
