@@ -292,7 +292,7 @@ static	cvar_t		*fs_steampath;
 
 static	cvar_t		*fs_basepath;
 static	cvar_t		*fs_basegame;
-static	cvar_t		*fs_maps;
+static	cvar_t		*fs_addons;
 static	cvar_t		*fs_copyfiles;
 static	cvar_t		*fs_gamedirvar;
 #ifndef USE_HANDLE_CACHE
@@ -4673,8 +4673,8 @@ static void FS_Startup( void ) {
 	Cvar_SetDescription( fs_basepath, "Write-protected CVAR specifying the path to the installation folder of the game." );
 	fs_basegame = Cvar_Get( "fs_basegame", BASEGAME, CVAR_INIT | CVAR_PROTECTED );
 	Cvar_SetDescription( fs_basegame, "Write-protected CVAR specifying the path to the base game(s) folder(s), separated by '/'." );
-	fs_maps = Cvar_Get( "fs_maps", BASEGAME "/maps", CVAR_INIT | CVAR_PROTECTED );
-	Cvar_SetDescription( fs_maps, "Write-protected CVAR specifying the path to an optional map folder." );
+	fs_addons = Cvar_Get( "fs_addons", BASEGAME "/addons", CVAR_INIT | CVAR_PROTECTED );
+	Cvar_SetDescription( fs_addons, "Write-protected CVAR specifying the path to an optional map folder." );
 	fs_steampath = Cvar_Get( "fs_steampath", Sys_SteamPath(), CVAR_INIT | CVAR_PROTECTED | CVAR_PRIVATE );
 
 	/* parse fs_basegame cvar */
@@ -4773,7 +4773,7 @@ static void FS_Startup( void ) {
 		}
 		if ( fs_basepath->string[0] != '\0' ) {
 			FS_AddGameDirectory( fs_basepath->string, fs_gamedirvar->string );
-			FS_AddGameDirectory( fs_basepath->string, fs_maps->string );
+			FS_AddGameDirectory( fs_basepath->string, fs_addons->string );
 		}
 		if ( fs_homepath->string[0] != '\0' && Q_stricmp( fs_homepath->string, fs_basepath->string ) ) {
 			FS_AddGameDirectory( fs_homepath->string, fs_gamedirvar->string );
@@ -5257,7 +5257,7 @@ void FS_InitFilesystem( void ) {
 	Com_StartupVariable( "fs_homepath" );
 	Com_StartupVariable( "fs_game" );
 	Com_StartupVariable( "fs_basegame" );
-	Com_StartupVariable( "fs_maps" );
+	Com_StartupVariable( "fs_addons" );
 	Com_StartupVariable( "fs_copyfiles" );
 	Com_StartupVariable( "fs_restrict" );
 #ifndef USE_HANDLE_CACHE
