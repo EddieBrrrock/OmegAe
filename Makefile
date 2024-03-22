@@ -500,6 +500,14 @@ ifdef MINGW
     endif
   endif
 
+  ifeq ($(USE_OPENAL),1)
+    ifeq ($(ARCH),x86)
+      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libopenal/windows/mingw/lib32/OpenAL32.dll
+    else
+      CLIENT_EXTRA_FILES += $(MOUNT_DIR)/libopenal/windows/mingw/lib64/OpenAL64.dll
+    endif
+  endif
+
   ifeq ($(USE_CURL),1)
     BASE_CFLAGS += -I$(MOUNT_DIR)/libcurl/windows/include
     ifeq ($(ARCH),x86)
