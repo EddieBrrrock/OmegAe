@@ -97,6 +97,7 @@ cvar_t *cl_drawBuffer;
 
 //OmegA
 cvar_t *cl_consoleHeight;
+cvar_t *cl_omegaEngine;
 cvar_t *fwd_use;
 cvar_t *fwd_addr;
 
@@ -4012,7 +4013,10 @@ void CL_Init( void ) {
 	cl_consoleHeight = Cvar_Get( "cl_consoleHeight", "0.5", CVAR_ARCHIVE );
 	Cvar_CheckRange( cl_consoleHeight, "0", "1", CV_FLOAT );
 	Cvar_SetDescription( cl_consoleHeight, "Console height, set as value from 0.0-1.0, use with \\seta to save in config." );
+	cl_omegaEngine = Cvar_Get( "cl_omegaEngine", "1", CVAR_ROM | CVAR_PROTECTED );
+	Cvar_SetDescription( cl_omegaEngine, "Informs the game that we are using OmegA engine." );
         fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription( fwd_use, "QWFWD proxy support from fX3." );
         fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
 
 	// userinfo
@@ -4167,6 +4171,7 @@ void CL_Shutdown( const char *finalmsg, qboolean quit ) {
 
 	CL_ClearInput();
 
+	Cvar_Set( "cl_omegaEngine", "0" );
 	Cvar_Set( "cl_running", "0" );
 
 	recursive = qfalse;
