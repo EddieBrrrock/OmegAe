@@ -198,7 +198,7 @@ extern cvar_t *s_musicVolume;
 extern cvar_t *s_doppler;
 extern cvar_t *s_muteWhenUnfocused;
 extern cvar_t *s_muteWhenMinimized;
-extern cvar_t *s_ambientSoundsVolume;
+extern cvar_t * s_worldVolume;
 
 extern cvar_t *s_testsound;
 

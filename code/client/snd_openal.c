@@ -1358,7 +1358,7 @@ static void S_AL_SrcLoop( alSrcPriority_t priority, sfxHandle_t sfx,
 	curSource->entity = entityNum;
 	curSource->isLooping = qtrue;
 
-	curSource->curGain = s_volume->value * s_ambientSoundsVolume->value;
+	curSource->curGain = s_volume->value * s_worldVolume->value;
 
 	if( S_AL_HearingThroughEntity( entityNum ) )
 	{

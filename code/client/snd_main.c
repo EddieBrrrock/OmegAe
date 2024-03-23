@@ -33,7 +33,7 @@ cvar_t *s_doppler;
 cvar_t *s_backend;
 cvar_t *s_muteWhenMinimized;
 cvar_t *s_muteWhenUnfocused;
-cvar_t *s_ambientSoundsVolume;
+cvar_t *s_worldVolume;
 
 static soundInterface_t si;
 
@@ -450,9 +450,9 @@ void S_Init( void )
 	s_muteWhenMinimized = Cvar_Get( "s_muteWhenMinimized", "1", CVAR_ARCHIVE );
 	Cvar_CheckRange( s_muteWhenMinimized, "0", "1", CV_INTEGER );
 	Cvar_SetDescription( s_muteWhenMinimized, "Mutes all audio while game is minimized." );
-	s_ambientSoundsVolume = Cvar_Get( "s_ambientSoundsVolume", "0.5", CVAR_ARCHIVE );
-	Cvar_CheckRange( s_ambientSoundsVolume, "0", "1", CV_FLOAT );
-	Cvar_SetDescription( s_ambientSoundsVolume, "Controls the volume for the ambient looping sounds." );
+	s_worldVolume = Cvar_Get( "s_worldVolume", "0.5", CVAR_ARCHIVE );
+	Cvar_CheckRange( s_worldVolume, "0", "1", CV_FLOAT );
+	Cvar_SetDescription( s_worldVolume, "Controls the volume for the ambient looping sounds." );
 
 	cv = Cvar_Get( "s_initsound", "1", 0 );
 	Cvar_SetDescription( cv, "Whether or not to startup the sound system." );
