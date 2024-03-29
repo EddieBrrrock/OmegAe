@@ -1349,17 +1349,18 @@ void IN_Frame( void )
 	IN_JoyMove();
 #endif
 
-	if ( Key_GetCatcher() & KEYCATCH_CONSOLE ) {
-		// temporarily deactivate if not in the game and
-		// running on the desktop with multimonitor configuration
-		if ( !glw_state.isFullscreen || glw_state.monitorCount > 1 ) {
-			IN_DeactivateMouse();
-		}
-	} else if ( !gw_active || !mouse_focus || in_nograb->integer ) {
+	if( !glw_state.isFullscreen && ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) )
+	{
+		// Console is down in windowed mode
 		IN_DeactivateMouse();
-	} else {
-		IN_ActivateMouse();
 	}
+	else if( !( SDL_GetWindowFlags( SDL_window ) & SDL_WINDOW_INPUT_FOCUS ) )
+	{
+		// Window not got focus
+		IN_DeactivateMouse();
+	}
+	else
+		IN_ActivateMouse();
 
 	//IN_ProcessEvents();
 	//HandleEvents();
