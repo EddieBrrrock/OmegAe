@@ -844,7 +844,7 @@ static size_t Com_DL_HeaderCallback( void *ptr, size_t size, size_t nmemb, void 
 
 	if ( size*nmemb >= sizeof( header ) )
 	{
-		Com_Printf( S_COLOR_RED "Com_DL_HeaderCallback: header is too large." );
+		Com_Printf( S_COLOR_RED "Com_DL_HeaderCallback: header is too large.\n" );
 		return (size_t)-1;
 	}
 
@@ -1131,7 +1131,7 @@ qboolean Com_DL_Perform( download_t *dl )
 	{
 		qboolean autoDownload = dl->mapAutoDownload;
 		dl->func.easy_getinfo( msg->easy_handle, CURLINFO_RESPONSE_CODE, &code );
-		Com_Printf( S_COLOR_RED "Download Error: %s Code: %ld\n",
+		Com_Printf( S_COLOR_RED "Download Error: %s\nCode: %ld\n",
 			dl->func.easy_strerror( msg->data.result ), code );
 		strcpy( name, dl->TempName );
 		Com_DL_Cleanup( dl );
@@ -1146,6 +1146,53 @@ qboolean Com_DL_Perform( download_t *dl )
 	}
 
 	return qtrue;
+}
+
+static size_t Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
+	return size *nmemb;
+}
+
+void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password) {
+	CURL		*curl;
+	CURLcode	result;
+        char		postData[256];
+
+	curl = qcurl_easy_init();
+
+	if(!curl) {
+		Com_Error(ERR_DROP, "CL_sendPOSTRequest: qcurl_easy_init() "
+			"failed");
+		return;
+	}
+
+        snprintf( postData, sizeof(postData), "username=%s&password=%s", username, password);
+
+        qcurl_easy_setopt(curl, CURLOPT_URL, url);
+        qcurl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
+        qcurl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+
+        result = qcurl_easy_perform(curl);
+	if(result != CURLE_OK) {
+		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(result));
+	}
+
+        qcurl_easy_cleanup(curl);
+}
+
+/*
+==================
+CL_Download_f
+==================
+*/
+void CL_Post_f( void )
+{
+	const char *url = "https://stats.vihmu.eu/upload/login";
+	const char *username = name->string;
+	const char *password = password->string;
+
+	sendPOSTRequest( url, username, password );
+
+	return 0;
 }
 
 #endif /* USE_CURL */

@@ -1573,6 +1573,8 @@ static void CL_Connect_f( void ) {
 	int		len;
 	int		argc;
 
+			Cvar_Set( "cl_forwardedTo", cls.fwd_to );
+
 	argc = Cmd_Argc();
 	family = NA_UNSPEC;
 
@@ -4000,7 +4002,7 @@ void CL_Init( void ) {
 	cl_dlURL = Cvar_Get( "cl_dlURL", "http://ws.q3df.org/maps/download/%1", CVAR_ARCHIVE_ND );
 	Cvar_SetDescription( cl_dlURL, "Cvar must point to download location." );
 
-	cl_dlDirectory = Cvar_Get( "cl_dlDirectory", "0", CVAR_ARCHIVE_ND );
+	cl_dlDirectory = Cvar_Get( "cl_dlDirectory", "1", CVAR_ARCHIVE_ND );
 	Cvar_CheckRange( cl_dlDirectory, "0", "1", CV_INTEGER );
 	s = va( "Save downloads initiated by \\dlmap and \\download commands in:\n"
 		" 0 - current game directory\n"
@@ -4037,6 +4039,7 @@ void CL_Init( void ) {
 	Cvar_Get ("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE_ND );
 
 	Cvar_Get ("password", "", CVAR_USERINFO | CVAR_NORESTART);
+	Cvar_Get ("hash", "", CVAR_USERINFO | CVAR_NORESTART);
 	Cvar_Get ("cg_predictItems", "1", CVAR_USERINFO | CVAR_ARCHIVE );
 
 
@@ -4083,6 +4086,7 @@ void CL_Init( void ) {
 #ifdef USE_CURL
 	Cmd_AddCommand( "download", CL_Download_f );
 	Cmd_AddCommand( "dlmap", CL_Download_f );
+	Cmd_AddCommand( "post", CL_Post_f );
 #endif
 	Cmd_AddCommand( "modelist", CL_ModeList_f );
 
@@ -4167,6 +4171,7 @@ void CL_Shutdown( const char *finalmsg, qboolean quit ) {
 
 	Cmd_RemoveCommand( "download" );
 	Cmd_RemoveCommand( "dlmap" );
+	Cmd_RemoveCommand( "post" );
 #endif
 
 	CL_ClearInput();
