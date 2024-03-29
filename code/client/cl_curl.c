@@ -1148,51 +1148,42 @@ qboolean Com_DL_Perform( download_t *dl )
 	return qtrue;
 }
 
+
 static size_t Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
-	return size *nmemb;
+	size_t	total_size;
+	char	size_str[32];
+
+	total_size = size * nmemb;
+
+	snprintf( size_str, sizeof(size_str), "%zu", total_size );
+	Cvar_Set( "hash", size_str );
 }
 
-void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password) {
+
+void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password ) {
 	CURL		*curl;
-	CURLcode	result;
+	CURLcode	res;
         char		postData[256];
 
 	curl = qcurl_easy_init();
 
 	if(!curl) {
-		Com_Error(ERR_DROP, "CL_sendPOSTRequest: qcurl_easy_init() "
+		Com_Error(ERR_DROP, "CL_cURL_sendPOSTRequest: qcurl_easy_init() "
 			"failed");
 		return;
 	}
 
-        snprintf( postData, sizeof(postData), "username=%s&password=%s", username, password);
+        snprintf( postData, sizeof(postData), "username=%s&password=%s", username, password );
 
         qcurl_easy_setopt(curl, CURLOPT_URL, url);
         qcurl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
-        qcurl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        qcurl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Com_POST_CallbackWrite);
 
-        result = qcurl_easy_perform(curl);
-	if(result != CURLE_OK) {
-		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(result));
+        res = qcurl_easy_perform(curl);
+	if(res != CURLE_OK) {
+		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(res));
 	}
 
         qcurl_easy_cleanup(curl);
 }
-
-/*
-==================
-CL_Download_f
-==================
-*/
-void CL_Post_f( void )
-{
-	const char *url = "https://stats.vihmu.eu/upload/login";
-	const char *username = name->string;
-	const char *password = password->string;
-
-	sendPOSTRequest( url, username, password );
-
-	return 0;
-}
-
 #endif /* USE_CURL */

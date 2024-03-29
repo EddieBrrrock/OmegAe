@@ -98,6 +98,7 @@ void CL_cURL_Shutdown( void );
 void CL_cURL_BeginDownload( const char *localName, const char *remoteURL );
 void CL_cURL_PerformDownload( void );
 void CL_cURL_Cleanup( void );
+void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password );
 
 typedef struct download_s {
 	char		URL[MAX_OSPATH];

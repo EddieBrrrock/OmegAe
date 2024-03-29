@@ -144,6 +144,7 @@ static void CL_ServerInfoPacket( const netadr_t *from, msg_t *msg );
 
 #ifdef USE_CURL
 static void CL_Download_f( void );
+static void CL_Post_f( void );
 #endif
 static void CL_LocalServers_f( void );
 static void CL_GlobalServers_f( void );
@@ -5137,5 +5138,20 @@ static void CL_Download_f( void )
 	}
 
 	CL_Download( Cmd_Argv( 0 ), Cmd_Argv( 1 ), qfalse );
+}
+
+
+/*
+==================
+CL_Post_f
+==================
+*/
+static void CL_Post_f( void )
+{
+	const char *url = "https://stats.vihmu.eu/upload/login";
+	const char *username = Cvar_VariableString( "name" );
+	const char *password = Cvar_VariableString( "password" );
+
+	CL_cURL_sendPOSTRequest( url, username, password );
 }
 #endif // USE_CURL
