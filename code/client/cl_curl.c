@@ -1150,13 +1150,9 @@ qboolean Com_DL_Perform( download_t *dl )
 
 
 static size_t Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
-	size_t	total_size;
-	char	size_str[32];
+	char	*hash_str = (char *)ptr;
 
-	total_size = size * nmemb;
-
-	snprintf( size_str, sizeof(size_str), "%zu", total_size );
-	Cvar_Set( "hash", size_str );
+	Cvar_Set( "hash", hash_str );
 }
 
 
@@ -1173,7 +1169,7 @@ void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char 
 		return;
 	}
 
-        snprintf( postData, sizeof(postData), "username=%s&password=%s", username, password );
+        snprintf( postData, sizeof(postData), "{\"name\":\"%s\",\"password\":\"%s\"}", username, password );
 
         qcurl_easy_setopt(curl, CURLOPT_URL, url);
         qcurl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);

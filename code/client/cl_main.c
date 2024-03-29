@@ -5152,6 +5152,10 @@ static void CL_Post_f( void )
 	const char *username = Cvar_VariableString( "name" );
 	const char *password = Cvar_VariableString( "password" );
 
-	CL_cURL_sendPOSTRequest( url, username, password );
+	if (!CL_cURL_Init()) {
+		Com_Printf("WARNING: could not load cURL library\n");
+	} else {
+		CL_cURL_sendPOSTRequest( url, username, password );
+	}
 }
 #endif // USE_CURL
