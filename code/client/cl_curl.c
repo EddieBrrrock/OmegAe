@@ -1158,7 +1158,7 @@ static void Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *
 
 void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password ) {
 	CURL		*curl;
-	CURLcode	res;
+	CURLcode	result;
         char		postData[256];
 
 	curl = qcurl_easy_init();
@@ -1175,9 +1175,9 @@ void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char 
         qcurl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
         qcurl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Com_POST_CallbackWrite);
 
-        res = qcurl_easy_perform(curl);
-	if(res != CURLE_OK) {
-		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(res));
+        result = qcurl_easy_perform(curl);
+	if(result != CURLE_OK) {
+		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(result));
 	}
 
         qcurl_easy_cleanup(curl);

@@ -100,6 +100,7 @@ cvar_t *cl_consoleHeight;
 cvar_t *cl_omegaEngine;
 cvar_t *fwd_use;
 cvar_t *fwd_addr;
+cvar_t	*postURL;
 
 clientActive_t		cl;
 clientConnection_t	clc;
@@ -4021,6 +4022,8 @@ void CL_Init( void ) {
         fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
 	Cvar_SetDescription( fwd_use, "QWFWD proxy support from fX3." );
         fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
+        postURL = Cvar_Get( "postURL", "https://stats.vihmu.eu/upload/login", 0 );
+	Cvar_SetDescription( postURL, "The URL address of the site you wish to send a post to." );
 
 	// userinfo
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE_ND );
@@ -5148,14 +5151,20 @@ CL_Post_f
 */
 static void CL_Post_f( void )
 {
-	const char *url = "https://stats.vihmu.eu/upload/login";
-	const char *username = Cvar_VariableString( "name" );
+	const char *url = Cvar_VariableString( "postURL" );
+	const char *name = Cvar_VariableString( "name" );
 	const char *password = Cvar_VariableString( "password" );
+
+	if ( !postURL->string[0] ) {
+		Com_Printf( "You must set the 'postURL' cvar\n"
+			"to issue post command\n" );
+		return;
+	}
 
 	if (!CL_cURL_Init()) {
 		Com_Printf("WARNING: could not load cURL library\n");
 	} else {
-		CL_cURL_sendPOSTRequest( url, username, password );
+		CL_cURL_sendPOSTRequest( url, name, password );
 	}
 }
 #endif // USE_CURL
