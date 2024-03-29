@@ -4016,8 +4016,10 @@ void CL_Init( void ) {
 	cl_omegaEngine = Cvar_Get( "cl_omegaEngine", "1", CVAR_ROM | CVAR_PROTECTED );
 	Cvar_SetDescription( cl_omegaEngine, "Informs the game that we are using OmegA engine." );
         fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
+	Cvar_CheckRange( fwd_use, "0", "1", CV_INTEGER );
 	Cvar_SetDescription( fwd_use, "QWFWD proxy support from fX3." );
         fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
+	Cvar_SetDescription( fwd_addr, "The IP address of the proxy you wish to connect to." );
 
 	// userinfo
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE_ND );
