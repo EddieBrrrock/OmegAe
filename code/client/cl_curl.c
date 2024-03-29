@@ -1149,10 +1149,10 @@ qboolean Com_DL_Perform( download_t *dl )
 }
 
 
-static size_t Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
+static void Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
 	char	*hash_str = (char *)ptr;
 
-	Cvar_Set( "hash", hash_str );
+	Cvar_Set( "hash", strndup( hash_str, 40 ) );
 }
 
 
