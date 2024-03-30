@@ -1989,6 +1989,40 @@ static void CL_Systeminfo_f( void ) {
 }
 
 
+#ifdef USE_CURL
+static void CL_Post( const char *url )
+{
+	const char *name = Cvar_VariableString( "name" );
+	const char *password = Cvar_VariableString( "password" );
+
+	if (!CL_cURL_Init()) {
+		Com_Printf("WARNING: could not load cURL library\n");
+	} else {
+		CL_cURL_sendPOSTRequest( url, name, password );
+	}
+}
+
+
+/*
+==================
+CL_Post_f
+==================
+*/
+static void CL_Post_f( void )
+{
+	const char *url = Cvar_VariableString( "cl_postURL" );
+
+	if ( !cl_postURL->string[0] ) {
+		Com_Printf( "You must set the 'cl_postURL' cvar\n"
+			"to issue post command\n" );
+		return;
+	}
+
+	CL_Post( url );
+}
+#endif /* USE_CURL */
+
+
 static void CL_CompleteCallvote(const char *args, int argNum )
 {
 	if( argNum >= 2 )
@@ -2029,7 +2063,7 @@ static void CL_DownloadsComplete( void ) {
 			return;
 		}
 	}
-#endif
+#endif /* USE_CURL */
 
 	// if we downloaded files we need to restart the file system
 	if ( clc.downloadRestart ) {
@@ -2228,13 +2262,14 @@ and determine if we need to download them
 */
 void CL_InitDownloads( void ) {
 
+#ifdef USE_CURL
 	if ( Cvar_VariableIntegerValue( "sv_needID" ) ) {
-		Cvar_Set( "cl_postURL", Cvar_VariableString( "sv_postURL" ) );
-		CL_Post_f();
+		CL_Post( Cvar_VariableString( "sv_postURL" ) );
 		if ( *Cvar_VariableString( "ID" ) == '\0' ) {
-			Com_Error (ERR_FATAL, "Server needs a valid name and password" );
+			Com_Error(ERR_DROP, "Server needs a valid name and password");
 		}
 	}
+#endif /* USE_CURL */
 
 	if ( !(cl_allowDownload->integer & DLF_ENABLE) )
 	{
@@ -5153,30 +5188,5 @@ static void CL_Download_f( void )
 	}
 
 	CL_Download( Cmd_Argv( 0 ), Cmd_Argv( 1 ), qfalse );
-}
-
-
-/*
-==================
-CL_Post_f
-==================
-*/
-static void CL_Post_f( void )
-{
-	const char *url = Cvar_VariableString( "cl_postURL" );
-	const char *name = Cvar_VariableString( "name" );
-	const char *password = Cvar_VariableString( "password" );
-
-	if ( !cl_postURL->string[0] ) {
-		Com_Printf( "You must set the 'cl_postURL' cvar\n"
-			"to issue post command\n" );
-		return;
-	}
-
-	if (!CL_cURL_Init()) {
-		Com_Printf("WARNING: could not load cURL library\n");
-	} else {
-		CL_cURL_sendPOSTRequest( url, name, password );
-	}
 }
 #endif // USE_CURL
