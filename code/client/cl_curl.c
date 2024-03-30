@@ -1150,9 +1150,15 @@ qboolean Com_DL_Perform( download_t *dl )
 
 
 static void Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
-	char	*hash_str = (char *)ptr;
+	char	*hash = (char*)ptr;
 
-	Cvar_Set( "hash", strndup( hash_str, 40 ) );
+	if ( strlen( hash ) < 40 ) {
+        	Cvar_Set( "ID", "" );
+		Com_Printf( S_COLOR_RED "Com_POST_CallbackWrite: Authentication failed.\n" );
+	} else {
+		Cvar_Set( "ID", strndup( hash, 40 ) );
+		Com_Printf( S_COLOR_GREEN "Your ID has been updated.\n" );
+	}
 }
 
 
@@ -1169,13 +1175,14 @@ void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char 
 		return;
 	}
 
-        snprintf( postData, sizeof(postData), "{\"name\":\"%s\",\"password\":\"%s\"}", username, password );
+	Com_sprintf( postData, sizeof( postData ), "{\"name\":\"%s\",\"password\":\"%s\"}", username, password );
 
         qcurl_easy_setopt(curl, CURLOPT_URL, url);
         qcurl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
         qcurl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Com_POST_CallbackWrite);
 
         result = qcurl_easy_perform(curl);
+
 	if(result != CURLE_OK) {
 		Com_DPrintf("qcurl_easy_perform failed: %s\n", qcurl_easy_strerror(result));
 	}
