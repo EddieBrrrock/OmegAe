@@ -309,8 +309,9 @@ extern	serverBan_t serverBans[SERVER_MAXBANS];
 extern	int serverBansCount;
 #endif
 
-#ifdef USE_BANS
+#ifdef USE_CURL
 extern	cvar_t	*sv_needID;
+extern	cvar_t	*sv_postURL;
 #endif
 
 //===========================================================

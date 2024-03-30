@@ -794,6 +794,7 @@ void SV_Init( void )
 #ifdef USE_CURL
 	sv_needID = Cvar_Get( "sv_needID", "0", CVAR_SERVERINFO );
 	Cvar_SetDescription( sv_needID, "Toggle the ability for clients without ID to join the server." );
+	sv_postURL = Cvar_Get( "sv_postURL", "", CVAR_SERVERINFO | CVAR_ARCHIVE );
 #endif
 
 	// initialize bot cvars so they are listed and can be set before loading the botlib

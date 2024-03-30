@@ -101,7 +101,7 @@ cvar_t *cl_omegaEngine;
 cvar_t *fwd_use;
 cvar_t *fwd_addr;
 #ifdef USE_CURL
-cvar_t	*postURL;
+cvar_t	*cl_postURL;
 #endif
 
 clientActive_t		cl;
@@ -1577,13 +1577,6 @@ static void CL_Connect_f( void ) {
 	int		len;
 	int		argc;
 
-	if ( Cvar_VariableIntegerValue( "sv_needID" ) ) {
-		CL_AddReliableCommand( "post", qfalse )
-		if ( Cvar_VariableString( "ID" ) == "" ) {
-			CL_AddReliableCommand( "disconnect", qfalse )
-		}
-	}
-
 	argc = Cmd_Argc();
 	family = NA_UNSPEC;
 
@@ -2234,6 +2227,14 @@ and determine if we need to download them
 =================
 */
 void CL_InitDownloads( void ) {
+
+	if ( Cvar_VariableIntegerValue( "sv_needID" ) ) {
+		Cvar_Set( "cl_postURL", Cvar_VariableString( "sv_postURL" ) );
+		CL_Post_f();
+		if ( *Cvar_VariableString( "ID" ) == '\0' ) {
+			Com_Error (ERR_FATAL, "Server needs a valid name and password" );
+		}
+	}
 
 	if ( !(cl_allowDownload->integer & DLF_ENABLE) )
 	{
@@ -4026,13 +4027,13 @@ void CL_Init( void ) {
 	Cvar_SetDescription( cl_consoleHeight, "Console height, set as value from 0.0-1.0, use with \\seta to save in config." );
 	cl_omegaEngine = Cvar_Get( "cl_omegaEngine", "1", CVAR_ROM | CVAR_PROTECTED );
 	Cvar_SetDescription( cl_omegaEngine, "Informs the game that we are using OmegA engine." );
+#ifdef USE_CURL
+        cl_postURL = Cvar_Get( "cl_postURL", "", CVAR_ARCHIVE_ND );
+	Cvar_SetDescription( cl_postURL, "Cvar must point to POST location." );
+#endif
         fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
 	Cvar_SetDescription( fwd_use, "QWFWD proxy support from fX3." );
         fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
-#ifdef USE_CURL
-        postURL = Cvar_Get( "postURL", "https://stats.vihmu.eu/upload/login", 0 );
-	Cvar_SetDescription( postURL, "The URL address of the site you wish to send a post to." );
-#endif
 
 	// userinfo
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE_ND );
@@ -5162,12 +5163,12 @@ CL_Post_f
 */
 static void CL_Post_f( void )
 {
-	const char *url = Cvar_VariableString( "postURL" );
+	const char *url = Cvar_VariableString( "cl_postURL" );
 	const char *name = Cvar_VariableString( "name" );
 	const char *password = Cvar_VariableString( "password" );
 
-	if ( !postURL->string[0] ) {
-		Com_Printf( "You must set the 'postURL' cvar\n"
+	if ( !cl_postURL->string[0] ) {
+		Com_Printf( "You must set the 'cl_postURL' cvar\n"
 			"to issue post command\n" );
 		return;
 	}

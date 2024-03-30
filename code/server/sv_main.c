@@ -65,6 +65,7 @@ int serverBansCount = 0;
 
 #ifdef USE_CURL
 cvar_t *sv_needID;
+cvar_t *sv_postURL;
 #endif
 
 /*
