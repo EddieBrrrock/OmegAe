@@ -100,7 +100,9 @@ cvar_t *cl_consoleHeight;
 cvar_t *cl_omegaEngine;
 cvar_t *fwd_use;
 cvar_t *fwd_addr;
+#ifdef USE_CURL
 cvar_t	*postURL;
+#endif
 
 clientActive_t		cl;
 clientConnection_t	clc;
@@ -1575,7 +1577,12 @@ static void CL_Connect_f( void ) {
 	int		len;
 	int		argc;
 
-			Cvar_Set( "cl_forwardedTo", cls.fwd_to );
+	if ( Cvar_VariableIntegerValue( "sv_needID" ) ) {
+		CL_AddReliableCommand( "post", qfalse )
+		if ( Cvar_VariableString( "ID" ) == "" ) {
+			CL_AddReliableCommand( "disconnect", qfalse )
+		}
+	}
 
 	argc = Cmd_Argc();
 	family = NA_UNSPEC;
@@ -4022,8 +4029,10 @@ void CL_Init( void ) {
         fwd_use = Cvar_Get( "fwd_use", "0", CVAR_ARCHIVE );
 	Cvar_SetDescription( fwd_use, "QWFWD proxy support from fX3." );
         fwd_addr = Cvar_Get( "fwd_addr", "", CVAR_ARCHIVE );
+#ifdef USE_CURL
         postURL = Cvar_Get( "postURL", "https://stats.vihmu.eu/upload/login", 0 );
 	Cvar_SetDescription( postURL, "The URL address of the site you wish to send a post to." );
+#endif
 
 	// userinfo
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE_ND );
@@ -4043,7 +4052,9 @@ void CL_Init( void ) {
 	Cvar_Get ("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE_ND );
 
 	Cvar_Get ("password", "", CVAR_USERINFO | CVAR_NORESTART);
+#ifdef USE_CURL
 	Cvar_Get ("ID", "", CVAR_USERINFO | CVAR_NORESTART | CVAR_ROM);
+#endif
 	Cvar_Get ("cg_predictItems", "1", CVAR_USERINFO | CVAR_ARCHIVE );
 
 

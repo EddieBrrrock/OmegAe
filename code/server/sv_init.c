@@ -791,6 +791,11 @@ void SV_Init( void )
 	sv_filter = Cvar_Get( "sv_filter", "filter.txt", CVAR_ARCHIVE );
 	Cvar_SetDescription( sv_filter, "Cvar that point on filter file, if it is "" then filtering will be disabled." );
 
+#ifdef USE_CURL
+	sv_needID = Cvar_Get( "sv_needID", "0", CVAR_SERVERINFO );
+	Cvar_SetDescription( sv_needID, "Toggle the ability for clients without ID to join the server." );
+#endif
+
 	// initialize bot cvars so they are listed and can be set before loading the botlib
 	SV_BotInitCvars();
 

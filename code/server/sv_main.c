@@ -63,6 +63,10 @@ serverBan_t serverBans[SERVER_MAXBANS];
 int serverBansCount = 0;
 #endif
 
+#ifdef USE_CURL
+cvar_t *sv_needID;
+#endif
+
 /*
 =============================================================================
 

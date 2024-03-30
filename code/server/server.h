@@ -309,6 +309,10 @@ extern	serverBan_t serverBans[SERVER_MAXBANS];
 extern	int serverBansCount;
 #endif
 
+#ifdef USE_BANS
+extern	cvar_t	*sv_needID;
+#endif
+
 //===========================================================
 
 //
