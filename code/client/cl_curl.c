@@ -1149,6 +1149,11 @@ qboolean Com_DL_Perform( download_t *dl )
 }
 
 
+/*
+=================
+Com_POST_CallbackWrite
+=================
+*/
 static void Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *userdata ) {
 	char	*hash = (char*)ptr;
 
@@ -1162,6 +1167,11 @@ static void Com_POST_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *
 }
 
 
+/*
+=================
+CL_cURL_sendPOSTRequest
+=================
+*/
 void CL_cURL_sendPOSTRequest( const char *url, const char *username, const char *password ) {
 	CURL		*curl;
 	CURLcode	result;
