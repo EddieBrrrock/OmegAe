@@ -1992,13 +1992,13 @@ static void CL_Systeminfo_f( void ) {
 #ifdef USE_CURL
 static void CL_Post( const char *url )
 {
-	const char *name = Cvar_VariableString( "name" );
+	const char *username = Cvar_VariableString( "username" );
 	const char *password = Cvar_VariableString( "password" );
 
 	if (!CL_cURL_Init()) {
 		Com_Printf("WARNING: could not load cURL library\n");
 	} else {
-		CL_cURL_sendPOSTRequest( url, name, password );
+		CL_cURL_sendPOSTRequest( url, username, password );
 	}
 }
 
@@ -2266,7 +2266,7 @@ void CL_InitDownloads( void ) {
 	if ( Cvar_VariableIntegerValue( "sv_needID" ) ) {
 		CL_Post( Cvar_VariableString( "sv_postURL" ) );
 		if ( *Cvar_VariableString( "ID" ) == '\0' ) {
-			Com_Error(ERR_DROP, "Server needs a valid name and password");
+			Com_Error(ERR_DROP, "Server needs a valid name and password, register at %s if it's not already done so", Cvar_VariableString( "sv_postURL" ) );
 		}
 	}
 #endif /* USE_CURL */
@@ -4089,6 +4089,7 @@ void CL_Init( void ) {
 
 	Cvar_Get ("password", "", CVAR_USERINFO | CVAR_NORESTART);
 #ifdef USE_CURL
+	Cvar_Get ("username", "", CVAR_USERINFO | CVAR_ARCHIVE_ND);
 	Cvar_Get ("ID", "", CVAR_USERINFO | CVAR_NORESTART | CVAR_ROM);
 #endif
 	Cvar_Get ("cg_predictItems", "1", CVAR_USERINFO | CVAR_ARCHIVE );
