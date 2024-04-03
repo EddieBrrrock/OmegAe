@@ -3,17 +3,17 @@
 [![build](../../workflows/build/badge.svg)](../../actions?query=workflow%3Abuild)
 
 This is a modern OpenArena engine aimed to be fast, secure and compatible with all existing OA mods.
-It is based on last non-SDL source dump of [quake3e](https://github.com/ec-/Quake3e) with latest upstream fixes applied.
+It is based on [quake3e](https://github.com/ec-/Quake3e) with latest upstream fixes applied.
 
 Go to [Releases](../../releases) section to download latest binaries for your platform or follow [Build Instructions](#build-instructions)
 
-*This repository does not contain any game content so in order to play you must copy the resulting binaries into your existing Quake III Arena installation*
+*This repository does not contain any game content so in order to play you must copy the resulting binaries into your existing OpenArena installation*
 
 **Key features**:
 
 * optimized OpenGL renderer
 * optimized Vulkan renderer
-* raw mouse input support, enabled automatically instead of DirectInput(**\in_mouse 1**) if available
+* raw mouse input support, enabled automatically instead of DirectInput (**\in_mouse 1**) if available
 * unlagged mouse events processing, can be reverted by setting **\in_lagged 1**
 * **\in_minimize** - hotkey for minimize/restore main window (win32-only, direct replacement for Q3Minimizer)
 * **\video-pipe** - to use external ffmpeg binary as an encoder for better quality and smaller output files
@@ -80,6 +80,7 @@ Performance is usually greater or equal to other opengl1 renderers
 * https://github.com/ioquake/ioq3
 * https://github.com/kennyalive/Quake-III-Arena-Kenny-Edition
 * https://github.com/OpenArena/engine
+* https://codeberg.org/ChannelZ/fX3
 
 ## Donate
 
