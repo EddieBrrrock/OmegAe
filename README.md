@@ -25,6 +25,7 @@ Go to [Releases](../../releases) section to download latest binaries for your pl
 * OpenAL sound API support (multiple speaker support and better sound quality)
 * Optional Ogg Vorbis support
 * [QWFWD](https://www.quakeworld.nu/wiki/QWfwd) proxy support from [fX3](https://codeberg.org/ChannelZ/fX3/), [list of servers](https://www.quakeservers.net//quakeworld/servers/t=proxy/)
+* console filters from [fX3](https://codeberg.org/ChannelZ/fX3/)
 * tons of bug fixes and other improvements
 
 ## Vulkan renderer
