@@ -519,9 +519,9 @@ qboolean CL_ValidPakSignature( const byte *data, int len );
 
 extern cvar_t *con_scale;
 
-void Con_CheckResize( void );
 void Con_Init( void );
 void Con_Shutdown( void );
+void Con_AcceptLine( void );
 void Con_ToggleConsole_f( void );
 void Con_ClearNotify( void );
 void Con_RunConsole( void );
@@ -532,6 +532,10 @@ void Con_Top( void );
 void Con_Bottom( void );
 void Con_Close( void );
 void Con_SetFrac( const float conFrac );
+
+void Con_PrevTab( void );
+void Con_NextTab( void );
+void Con_SwitchToTab( int i );
 
 void CL_LoadConsoleHistory( void );
 void CL_SaveConsoleHistory( void );
