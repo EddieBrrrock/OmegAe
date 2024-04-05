@@ -2251,7 +2251,7 @@ static bot_chat_t *BotLoadInitialChat(const char *chatfile, const char *chatname
 		} //end if
 	} //end for
 	//
-	botimport.Print(PRT_MESSAGE, "loaded %s from %s\n", chatname, chatfile);
+	//botimport.Print(PRT_MESSAGE, "loaded %s from %s\n", chatname, chatfile);
 	//
 	//BotDumpInitialChat(chat);
 	if (botDeveloper)

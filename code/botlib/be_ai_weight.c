@@ -426,7 +426,7 @@ weightconfig_t *ReadWeightConfig(const char *filename)
 	//free the source at the end of a pass
 	FreeSource(source);
 	//if the file was located in a pak file
-	botimport.Print(PRT_MESSAGE, "loaded %s\n", filename);
+	//botimport.Print(PRT_MESSAGE, "loaded %s\n", filename);
 #ifdef DEBUG
 	if (botDeveloper)
 	{

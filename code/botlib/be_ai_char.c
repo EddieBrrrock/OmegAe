@@ -683,7 +683,7 @@ int BotLoadCharacter(const char *charfile, float skill)
 	handle = BotFindCachedCharacter(charfile, skill);
 	if (handle)
 	{
-		botimport.Print(PRT_MESSAGE, "loaded cached skill %f from %s\n", skill, charfile);
+		//botimport.Print(PRT_MESSAGE, "loaded cached skill %f from %s\n", skill, charfile);
 		BotReferenceHandle( handle, 1 );
 		return handle;
 	} //end if
