@@ -46,6 +46,8 @@ cvar_t	*r_railWidth;
 cvar_t	*r_railCoreWidth;
 cvar_t	*r_railSegmentLength;
 
+cvar_t	*r_drawLightningBolt;
+
 cvar_t	*r_detailTextures;
 
 cvar_t	*r_znear;
@@ -1641,6 +1643,9 @@ static void R_Register( void )
 	ri.Cvar_SetDescription( r_railCoreWidth, "Size of railgun trail rings when enabled in game code (normally \\cg_oldRail 0)." );
 	r_railSegmentLength = ri.Cvar_Get( "r_railSegmentLength", "32", CVAR_ARCHIVE_ND );
 	ri.Cvar_SetDescription( r_railSegmentLength, "Length of segments in railgun trails." );
+
+	r_drawLightningBolt = ri.Cvar_Get( "r_drawLightningBolt", "1", CVAR_ARCHIVE_ND );
+	ri.Cvar_SetDescription( r_drawLightningBolt, "Enables Lightning Gun beam." );
 
 	r_ambientScale = ri.Cvar_Get( "r_ambientScale", "0.6", CVAR_CHEAT );
 	ri.Cvar_SetDescription( r_ambientScale, "Light grid ambient light scaling on entity models." );

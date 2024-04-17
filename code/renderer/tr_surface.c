@@ -1332,7 +1332,9 @@ static void RB_SurfaceEntity( const surfaceType_t *surfType ) {
 		RB_SurfaceRailRings();
 		break;
 	case RT_LIGHTNING:
-		RB_SurfaceLightningBolt();
+		if ( r_drawLightningBolt->integer ) {
+			RB_SurfaceLightningBolt();
+		}
 		break;
 	default:
 		RB_SurfaceAxis();
