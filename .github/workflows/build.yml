@@ -141,7 +141,7 @@ jobs:
     steps:
 
     - name: Install tools
-      run: brew install coreutils pkg-config
+      run: brew install coreutils sdl2 # pkg-config
 
     - uses: actions/checkout@v4
       with:
@@ -177,7 +177,7 @@ jobs:
           7z a -r q3-omega-engine-macos-x86_64.zip		./release-darwin-x86_64
           7z a -r q3-omega-engine-macos-arm64.zip			./release-darwin-arm64
       - name: Create latest build
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: czietz/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: "q3-omega"
