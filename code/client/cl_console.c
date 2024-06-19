@@ -85,11 +85,11 @@ typedef struct {
 #define  DEFAULT_CON	CON_ALL
 
 char *conName[] = {
-	"All",
-	"Sys",
-	"Chat",
-	"Team",
-	"Private"
+	"all",
+	"sys",
+	"chat",
+	"team",
+	"tell"
 };
 
 const int conColors[] = {
@@ -1130,7 +1130,7 @@ static void Con_DrawSolidConsole( float frac ) {
 	}
 
 	// draw console tabs (fX3)
-	margin = 3;
+	margin = 13;
 
 	darkTextColor[0] = darkTextColor[1] = darkTextColor[2] = 0.25;
 	darkTextColor[3] = 1;
@@ -1146,7 +1146,7 @@ static void Con_DrawSolidConsole( float frac ) {
 					SCR_DrawSmallStringExt( margin + 10, lines - smallchar_height, con[j].name, darkTextColor, qfalse, qtrue );
 				}
 			}
-			margin += strlen( con[j].name ) * smallchar_width + 10;
+			margin += strlen( con[j].name ) * smallchar_width + 20;
 		}
 	}
 
