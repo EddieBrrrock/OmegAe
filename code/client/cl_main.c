@@ -1100,7 +1100,7 @@ void CL_MapLoading( void ) {
 		Com_Memset( cls.updateInfoString, 0, sizeof( cls.updateInfoString ) );
 		Com_Memset( clc.serverMessage, 0, sizeof( clc.serverMessage ) );
 		Com_Memset( &cl.gameState, 0, sizeof( cl.gameState ) );
-		clc.lastPacketSentTime = -9999;
+		clc.lastPacketSentTime = cls.realtime - 9999;  // send packet immediately
 		cls.framecount++;
 		SCR_UpdateScreen();
 	} else {
@@ -2131,7 +2131,7 @@ void CL_NextDownload( void )
 			Com_Error(ERR_DROP, "Incorrect checksum for file: %s", clc.downloadName);
 	}
 
-	*clc.downloadTempName = *clc.downloadName = 0;
+	*clc.downloadTempName = *clc.downloadName = '\0';
 	Cvar_Set("cl_downloadName", "");
 
 	// We are looking to start a download here
@@ -2778,7 +2778,7 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 		Netchan_Setup( NS_CLIENT, &clc.netchan, from, Cvar_VariableIntegerValue( "net_qport" ), clc.challenge, clc.compat );
 
 		cls.state = CA_CONNECTED;
-		clc.lastPacketSentTime = -9999;		// send first packet immediately
+		clc.lastPacketSentTime = cls.realtime - 9999; // send first packet immediately
 		return qtrue;
 	}
 

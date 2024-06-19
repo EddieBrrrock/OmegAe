@@ -288,6 +288,9 @@ static void SV_MapRestart_f( void ) {
 	// map_restart has happened
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
 
+	// generate a new restartedServerid
+	sv.restartedServerId = com_frameTime;
+
 	// if a map_restart occurs while a client is changing maps, we need
 	// to give them the correct time so that when they finish loading
 	// they don't violate the backwards time check in cl_cgame.c
@@ -365,8 +368,6 @@ static void SV_MapRestart_f( void ) {
 			client->lastUsercmd.serverTime = sv.time - 1;
 		}
 	}
-
-	sv.restartedServerId = com_frameTime;
 }
 
 
