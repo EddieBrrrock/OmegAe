@@ -66,12 +66,11 @@ typedef struct snapshotFrame_s {
 typedef struct {
 	serverState_t	state;
 	qboolean		restarting;			// if true, send configstring changes during SS_LOADING
+	int				pure;				// fixed at level spawn
+	int				maxclients;			// fixed at level spawn
 	int				serverId;			// changes each server start
 	int				restartedServerId;	// changes each map restart
 	int				checksumFeed;		// the feed key that we use to compute the pure checksum strings
-	// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=475
-	// the serverId associated with the current checksumFeed (always <= serverId)
-	int				checksumFeedServerId;
 	int				snapshotCounter;	// incremented for each snapshot built
 	int				timeResidual;		// <= 1000 / sv_frame->value
 	char			*configstrings[MAX_CONFIGSTRINGS];
@@ -150,6 +149,13 @@ struct leakyBucket_s {
 	leakyBucket_t *prev, *next;
 };
 
+typedef enum {
+	GSA_INIT = 0,	// gamestate never sent with current sv.serverId
+	GSA_SENT_ONCE,	// gamestate sent once, client can reply with any (messageAcknowledge - gamestateMessageNum) >= 0 and correct serverId
+	GSA_SENT_MANY,	// gamestate sent many times, client must reply with exact gamestateMessageNum == gamestateMessageNum and correct serverId
+	GSA_ACKED		// gamestate acknowledged, no retansmissions needed
+} gameStateAck_t;
+
 typedef struct client_s {
 	clientState_t	state;
 	char			userinfo[MAX_INFO_STRING];		// name, etc
@@ -168,7 +174,7 @@ typedef struct client_s {
 	sharedEntity_t	*gentity;			// SV_GentityNum(clientnum)
 	char			name[MAX_NAME_LENGTH];			// extracted from userinfo, high bits masked
 
-	qboolean		gamestateAcked;		// set to qtrue when serverId = sv.serverId & messageAcknowledge = gamestateMessageNum
+	gameStateAck_t	gamestateAck;
 	qboolean		downloading;		// set at "download", reset at gamestate retransmission
 	// int				serverId;		// last acknowledged serverId
 
@@ -342,7 +348,6 @@ void SV_UpdateConfigstrings( client_t *client );
 void SV_SetUserinfo( int index, const char *val );
 void SV_GetUserinfo( int index, char *buffer, int bufferSize );
 
-void SV_ChangeMaxClients( void );
 void SV_SpawnServer( const char *mapname, qboolean killBots );
 
 

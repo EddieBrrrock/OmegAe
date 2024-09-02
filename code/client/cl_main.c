@@ -1271,9 +1271,7 @@ qboolean CL_Disconnect( qboolean showMainMenu ) {
 	// send it a few times in case one is dropped
 	if ( cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC && !clc.demoplaying ) {
 		CL_AddReliableCommand( "disconnect", qtrue );
-		CL_WritePacket();
-		CL_WritePacket();
-		CL_WritePacket();
+		CL_WritePacket( 2 );
 	}
 
 	CL_ClearState();
@@ -2072,9 +2070,7 @@ static void CL_DownloadsComplete( void ) {
 	// set pure checksums
 	CL_SendPureChecksums();
 
-	CL_WritePacket();
-	CL_WritePacket();
-	CL_WritePacket();
+	CL_WritePacket( 2 );
 }
 
 

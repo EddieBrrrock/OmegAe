@@ -380,7 +380,7 @@ static int seqs[ MAX_CLIENTS ];
 
 static void SV_SaveSequences( void ) {
 	int i;
-	for ( i = 0; i < sv_maxclients->integer; i++ ) {
+	for ( i = 0; i < sv.maxclients; i++ ) {
 		seqs[i] = svs.clients[i].reliableSequence;
 	}
 }
@@ -390,7 +390,7 @@ static void SV_InjectLocation( const char *tld, const char *country ) {
 	const char *cmd;
 	char *str;
 	int i, n;
-	for ( i = 0; i < sv_maxclients->integer; i++ ) {
+	for ( i = 0; i < sv.maxclients; i++ ) {
 		if ( seqs[i] != svs.clients[i].reliableSequence ) {
 			for ( n = seqs[i]; n != svs.clients[i].reliableSequence + 1; n++ ) {
 				cmd = svs.clients[i].reliableCommands[n & (MAX_RELIABLE_COMMANDS-1)];
@@ -503,7 +503,7 @@ void SV_DirectConnect( const netadr_t *from ) {
 	}
 
 	// check for concurrent connections
-	for ( i = 0, n = 0; i < sv_maxclients->integer; i++ ) {
+	for ( i = 0, n = 0; i < sv.maxclients; i++ ) {
 		const netadr_t *addr = &svs.clients[ i ].netchan.remoteAddress;
 		if ( addr->type != NA_BOT && NET_CompareBaseAdr( addr, from ) ) {
 			if ( svs.clients[ i ].state >= CS_CONNECTED && !svs.clients[ i ].justConnected ) {
@@ -643,7 +643,7 @@ void SV_DirectConnect( const netadr_t *from ) {
 
 	// quick reject
 	newcl = NULL;
-	for ( i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++ ) {
+	for ( i = 0, cl = svs.clients; i < sv.maxclients; i++, cl++ ) {
 		if ( NET_CompareAdr( from, &cl->netchan.remoteAddress ) ) {
 			int elapsed = svs.time - cl->lastConnectTime;
 			if ( elapsed < ( sv_reconnectlimit->integer * 1000 ) && elapsed >= 0 ) {
@@ -664,7 +664,7 @@ void SV_DirectConnect( const netadr_t *from ) {
 	}
 
 	// if there is already a slot for this ip, reuse it
-	for ( i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++ ) {
+	for ( i = 0, cl = svs.clients; i < sv.maxclients; i++, cl++ ) {
 		if ( cl->state == CS_FREE ) {
 			continue;
 		}
@@ -713,7 +713,7 @@ void SV_DirectConnect( const netadr_t *from ) {
 	// select least used free slot
 	n = 0;
 	newcl = NULL;
-	for ( i = startIndex; i < sv_maxclients->integer ; i++ ) {
+	for ( i = startIndex; i < sv.maxclients; i++ ) {
 		cl = &svs.clients[i];
 		if ( cl->state == CS_FREE && ( newcl == NULL || svs.time - cl->lastDisconnectTime > n ) ) {
 			n = svs.time - cl->lastDisconnectTime;
@@ -724,16 +724,16 @@ void SV_DirectConnect( const netadr_t *from ) {
 	if ( !newcl ) {
 		if ( NET_IsLocalAddress( from ) ) {
 			count = 0;
-			for ( i = startIndex; i < sv_maxclients->integer ; i++ ) {
+			for ( i = startIndex; i < sv.maxclients; i++ ) {
 				cl = &svs.clients[i];
 				if (cl->netchan.remoteAddress.type == NA_BOT) {
 					count++;
 				}
 			}
 			// if they're all bots
-			if (count >= sv_maxclients->integer - startIndex) {
-				SV_DropClient(&svs.clients[sv_maxclients->integer - 1], "only bots on server");
-				newcl = &svs.clients[sv_maxclients->integer - 1];
+			if (count >= sv.maxclients - startIndex) {
+				SV_DropClient(&svs.clients[sv.maxclients - 1], "only bots on server");
+				newcl = &svs.clients[sv.maxclients - 1];
 			}
 			else {
 				Com_Error( ERR_DROP, "server is full on local connect" );
@@ -824,12 +824,12 @@ gotnewcl:
 	// if this was the first client on the server, or the last client
 	// the server can hold, send a heartbeat to the master.
 	count = 0;
-	for (i=0,cl=svs.clients ; i < sv_maxclients->integer ; i++,cl++) {
+	for ( i = 0, cl = svs.clients ; i < sv.maxclients; i++, cl++) {
 		if ( svs.clients[i].state >= CS_CONNECTED ) {
 			count++;
 		}
 	}
-	if ( count == 1 || count == sv_maxclients->integer ) {
+	if ( count == 1 || count == sv.maxclients ) {
 		SV_Heartbeat_f();
 	}
 }
@@ -915,12 +915,12 @@ void SV_DropClient( client_t *drop, const char *reason ) {
 	// if this was the last client on the server, send a heartbeat
 	// to the master so it is known the server is empty
 	// send a heartbeat now so the master will get up to date info
-	for ( i = 0 ; i < sv_maxclients->integer ; i++ ) {
+	for ( i = 0; i < sv.maxclients; i++ ) {
 		if ( svs.clients[i].state >= CS_CONNECTED ) {
 			break;
 		}
 	}
-	if ( i == sv_maxclients->integer ) {
+	if ( i == sv.maxclients ) {
 		SV_Heartbeat_f();
 	}
 }
@@ -1021,6 +1021,7 @@ static void SV_SendClientGameState( client_t *client ) {
 	const svEntity_t *svEnt;
 	msg_t		msg;
 	byte		msgBuffer[ MAX_MSGLEN_BUF ];
+	qboolean	csUpdated;
 
 	Com_DPrintf( "SV_SendClientGameState() for %s\n", client->name );
 
@@ -1028,7 +1029,6 @@ static void SV_SendClientGameState( client_t *client ) {
 
 	client->state = CS_PRIMED;
 
-	client->gamestateAcked = qfalse;
 	client->downloading = qfalse;
 
 	client->pureAuthentic = qfalse;
@@ -1063,13 +1063,37 @@ static void SV_SendClientGameState( client_t *client ) {
 	MSG_WriteLong( &msg, client->reliableSequence );
 
 	// write the configstrings
+	csUpdated = qfalse;
 	for ( start = 0 ; start < MAX_CONFIGSTRINGS ; start++ ) {
 		if ( *sv.configstrings[ start ] != '\0' ) {
 			MSG_WriteByte( &msg, svc_configstring );
 			MSG_WriteShort( &msg, start );
-			MSG_WriteBigString( &msg, sv.configstrings[ start ] );
+			if ( start == CS_SYSTEMINFO && sv.pure != sv_pure->integer ) {
+				// make sure we send latched sv.pure, not forced cvar value
+				char systemInfo[BIG_INFO_STRING];
+				Q_strncpyz( systemInfo, sv.configstrings[ start ], sizeof( systemInfo ) );
+				Info_SetValueForKey_s( systemInfo, sizeof( systemInfo ), "sv_pure", va( "%i", sv.pure ) );
+				MSG_WriteBigString( &msg, systemInfo );
+			} else {
+				MSG_WriteBigString( &msg, sv.configstrings[start] );
+			}
 		}
-		client->csUpdated[ start ] = qfalse;
+		if ( client->csUpdated[start] ) {
+			csUpdated = qtrue;
+		}
+		client->csUpdated[start] = qfalse;
+	}
+
+	if ( client->gamestateAck == GSA_INIT ) {
+		// inital submission, accept any messageAcknowledge with matching serverId
+		client->gamestateAck = GSA_SENT_ONCE;
+	} else {
+		if ( client->gamestateAck == GSA_SENT_ONCE && !csUpdated ) {
+			// if no configstrings being updated since last submission then assume that we're (re)sending identical gamestate
+		} else {
+			// expect exact messageAcknowledge
+			client->gamestateAck = GSA_SENT_MANY;
+		}
 	}
 
 	// write the baselines
@@ -1127,8 +1151,8 @@ void SV_ClientEnterWorld( client_t *client ) {
 	}
 
 	client->state = CS_ACTIVE;
+	client->gamestateAck = GSA_ACKED;
 
-	client->gamestateAcked = qtrue;
 	client->oldServerTime = 0;
 
 	// resend all configstrings using the cs commands since these are
@@ -1214,7 +1238,7 @@ static void SV_DoneDownload_f( client_t *cl ) {
 	if ( cl->state == CS_ACTIVE )
 		return;
 
-	Com_DPrintf( "clientDownload: %s Done\n", cl->name);
+	Com_DPrintf( "clientDownload: %s Done\n", cl->name );
 
 	// resend the game state to update any clients that entered during the download
 	SV_SendClientGameState( cl );
@@ -1273,7 +1297,10 @@ static void SV_BeginDownload_f( client_t *cl ) {
 	cl->gentity = NULL;
 
 	cl->downloading = qtrue;
-	cl->gamestateAcked = qfalse;
+
+	if ( cl->gamestateAck == GSA_ACKED ) {
+		cl->gamestateAck = GSA_SENT_ONCE;
+	}
 }
 
 
@@ -1359,7 +1386,7 @@ static int SV_WriteDownloadToClient( client_t *cl )
 				(sv_allowDownload->integer & DLF_NO_UDP) ) {
 
 				Com_Printf("clientDownload: %d : \"%s\" download disabled\n", (int) (cl - svs.clients), cl->downloadName);
-				if (sv_pure->integer) {
+				if ( sv.pure != 0 ) {
 					Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
 										"You will need to get this file elsewhere before you "
 										"can connect to this pure server.\n", cl->downloadName);
@@ -1498,7 +1525,7 @@ int SV_SendQueuedMessages( void )
 	int i, retval = -1, nextFragT;
 	client_t *cl;
 
-	for( i = 0; i < sv_maxclients->integer; i++ )
+	for( i = 0; i < sv.maxclients; i++ )
 	{
 		cl = &svs.clients[i];
 
@@ -1530,7 +1557,7 @@ int SV_SendDownloadMessages( void )
 	int i, numDLs = 0;
 	client_t *cl;
 
-	for( i = 0; i < sv_maxclients->integer; i++ )
+	for( i = 0; i < sv.maxclients; i++ )
 	{
 		cl = &svs.clients[ i ];
 		if ( cl->state >= CS_CONNECTED && *cl->downloadName )
@@ -1578,7 +1605,7 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 	// certain pk3 files, namely we want the client to have loaded the
 	// ui and cgame that we think should be loaded based on the pure setting
 	//
-	if ( sv_pure->integer != 0 ) {
+	if ( sv.pure != 0 ) {
 
 		nChkSum1 = nChkSum2 = 0;
 
@@ -1600,11 +1627,8 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 		}
 		else
 		{
-			// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=475
-			// we may get incoming cp sequences from a previous checksumFeed, which we need to ignore
-			// since serverId is a frame count, it always goes up
-			if ( atoi( pArg ) - sv.checksumFeedServerId < 0 )
-			{
+			// we may get incoming cp sequences from a previous serverId, which we need to ignore
+			if ( atoi( pArg ) != sv.serverId /* || !cl->gamestateAcked */ ) {
 				Com_DPrintf( "ignoring outdated cp command from client %s\n", cl->name );
 				return;
 			}
@@ -1873,7 +1897,7 @@ void SV_PrintLocations_f( client_t *client ) {
 	max_ctrylength = 7; // strlen( "country" )
 
 	// first pass: save and determine max.lengths of name/address fields
-	for ( i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++ )
+	for ( i = 0, cl = svs.clients; i < sv.maxclients; i++, cl++ )
 	{
 		if ( cl->state == CS_FREE )
 			continue;
@@ -1897,7 +1921,7 @@ void SV_PrintLocations_f( client_t *client ) {
 	Com_sprintf( line, sizeof( line ), "-- %s -- %s\n", filln, fillc );
 	s = Q_stradd( s, line );
 
-	for ( i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++ )
+	for ( i = 0, cl = svs.clients; i < sv.maxclients; i++, cl++ )
 	{
 		if ( cl->state == CS_FREE )
 			continue;
@@ -2149,7 +2173,7 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 	// if this is the first usercmd we have received
 	// this gamestate, put the client into the world
 	if ( cl->state == CS_PRIMED ) {
-		if ( sv_pure->integer != 0 && !cl->gotCP ) {
+		if ( sv.pure != 0 && !cl->gotCP ) {
 			// we didn't get a cp yet, don't assume anything and just send the gamestate all over again
 			if ( !SVC_RateLimit( &cl->gamestate_rate, 2, 1000 ) ) {
 				Com_DPrintf( "%s: didn't get cp command, resending gamestate\n", cl->name );
@@ -2162,15 +2186,7 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 	}
 
 	// a bad cp command was sent, drop the client
-	if ( sv_pure->integer != 0 && !cl->pureAuthentic ) {
-#ifndef DEDICATED
-		if ( !cl->gotCP && cl->state == CS_ACTIVE && cl->netchan.remoteAddress.type == NA_LOOPBACK ) {
-			// fix host player being dropped with ZTM' FlexibleHud at level end in TA SP
-			// FIXME: exact reason how cl->pureAuthentic being reset is unclear, should be investigated later
-			Com_DPrintf( "%s: didn't get cp command, resending gamestate\n", cl->name );
-			SV_SendClientGameState( cl );
-		} else
-#endif
+	if ( sv.pure != 0 && !cl->pureAuthentic ) {
 		SV_DropClient( cl, "Cannot validate pure client!" );
 		return;
 	}
@@ -2285,14 +2301,17 @@ void SV_ExecuteClientMessage( client_t *cl, msg_t *msg ) {
 			}
 			return;
 		}
-	} else if ( !cl->gamestateAcked ) {
-		// eary check for gamestate acknowledge
-		if ( serverId == sv.serverId && cl->messageAcknowledge == cl->gamestateMessageNum ) {
-			cl->gamestateAcked = qtrue;
-			// this client has acknowledged the new gamestate so it's
-			// safe to start sending it the real time again
-			Com_DPrintf( "%s acknowledged gamestate\n", cl->name );
-			cl->oldServerTime = 0;
+	} else if ( cl->gamestateAck != GSA_ACKED ) {
+		// early check for gamestate acknowledge
+		if ( serverId == sv.serverId ) {
+			const int delta = cl->messageAcknowledge - cl->gamestateMessageNum;
+			if ( delta == 0 || ( delta > 0 && cl->gamestateAck == GSA_SENT_ONCE ) ) {
+				cl->gamestateAck = GSA_ACKED;
+				// this client has acknowledged the new gamestate so it's
+				// safe to start sending it the real time again
+				Com_DPrintf( "%s acknowledged gamestate with delta %i\n", cl->name, delta );
+				cl->oldServerTime = 0;
+			}
 		}
 	}
 	// else if ( cl->state == CS_PRIMED ) {
@@ -2315,7 +2334,7 @@ void SV_ExecuteClientMessage( client_t *cl, msg_t *msg ) {
 		}
 	} while ( 1 );
 
-	if ( !cl->gamestateAcked ) {
+	if ( cl->gamestateAck != GSA_ACKED ) {
 		// late check for gamestate resend
 		if ( cl->state == CS_PRIMED && cl->messageAcknowledge - cl->gamestateMessageNum > 0 ) {
 			Com_DPrintf( "%s: dropped gamestate, resending\n", cl->name );
