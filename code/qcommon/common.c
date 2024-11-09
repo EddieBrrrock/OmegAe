@@ -3770,6 +3770,9 @@ void Com_Init( char *commandLine ) {
 	const char *s;
 	int	qport;
 
+	// get the initial time base
+	Sys_Milliseconds();
+
 	Com_Printf( "%s %s %s\n", SVN_VERSION, PLATFORM_STRING, __DATE__ );
 
 	if ( Q_setjmp( abortframe ) ) {
@@ -4036,7 +4039,8 @@ void Com_Init( char *commandLine ) {
 	// set com_frameTime so that if a map is started on the
 	// command line it will still be able to count on com_frameTime
 	// being random enough for a serverid
-	lastTime = com_frameTime = Com_Milliseconds();
+	// lastTime = com_frameTime = Com_Milliseconds();
+	Com_FrameInit();
 
 	if ( !com_errorEntered )
 		Sys_ShowConsole( com_viewlog->integer, qfalse );
@@ -4049,6 +4053,10 @@ void Com_Init( char *commandLine ) {
 	com_fullyInitialized = qtrue;
 
 	Com_Printf( "--- Common Initialization Complete ---\n" );
+
+	NET_Init();
+
+	Com_Printf( "Working directory: %s\n", Sys_Pwd() );
 }
 
 
@@ -4211,6 +4219,15 @@ static int Com_TimeVal( int minMsec )
 	return timeVal;
 }
 
+/*
+=================
+Com_FrameInit
+=================
+*/
+void Com_FrameInit( void )
+{
+	lastTime = com_frameTime = Com_Milliseconds();
+}
 
 /*
 =================
@@ -4396,9 +4413,7 @@ void Com_Frame( qboolean noDelay ) {
 		}
 		Com_EventLoop();
 
-		if ( !Cbuf_Wait() ) {
-			Cbuf_Execute();
-		}
+		Cbuf_Execute();
 
 		//
 		// client side
@@ -4416,6 +4431,8 @@ void Com_Frame( qboolean noDelay ) {
 #endif
 
 	NET_FlushPacketQueue( 0 );
+
+	Cbuf_Wait();
 
 	//
 	// report timing information

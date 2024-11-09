@@ -487,7 +487,7 @@ void Cbuf_Execute( void );
 // Normally called once per frame, but may be explicitly invoked.
 // Do not call inside a command function, or current args will be destroyed.
 
-qboolean Cbuf_Wait( void );
+void Cbuf_Wait( void );
 // Checks if wait command timeout remaining
 
 //===========================================================================
@@ -1136,6 +1136,7 @@ unsigned int Com_TouchMemory( void );
 
 // commandLine should not include the executable name (argv[0])
 void Com_Init( char *commandLine );
+void Com_FrameInit( void );
 void Com_Frame( qboolean noDelay );
 
 /*
