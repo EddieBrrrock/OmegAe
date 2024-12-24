@@ -278,7 +278,14 @@ static int GLW_SetMode( int mode, const char *modeFS, qboolean fullscreen, qbool
 	if ( fullscreen )
 	{
 #ifdef MACOS_X
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		if ( r_mode->integer == -2 )
+		{
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+		else
+		{
+		flags |= SDL_WINDOW_FULLSCREEN;
+		}
 #else
 		flags |= SDL_WINDOW_FULLSCREEN;
 #endif

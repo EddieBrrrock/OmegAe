@@ -3820,7 +3820,11 @@ static void CL_InitGLimp_Cvars( void )
 	Cvar_CheckRange( r_noborder, "0", "1", CV_INTEGER );
 	Cvar_SetDescription( r_noborder, "Setting to 1 will remove window borders and title bar in windowed mode, hold ALT to drag & drop it with opened console." );
 
+#ifdef MACOS_X
+	r_mode = Cvar_Get( "r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH );
+#else
 	r_mode = Cvar_Get( "r_mode", "-1", CVAR_ARCHIVE | CVAR_LATCH );
+#endif
 	Cvar_CheckRange( r_mode, "-2", va( "%i", s_numVidModes-1 ), CV_INTEGER );
 	Cvar_SetDescription( r_mode, "Set video mode:\n -2 - use current desktop resolution\n -1 - use \\r_customWidth and \\r_customHeight\n  0..N - enter \\modelist for details" );
 	r_modeFullscreen = Cvar_Get( "r_modeFullscreen", "", CVAR_ARCHIVE | CVAR_LATCH );
