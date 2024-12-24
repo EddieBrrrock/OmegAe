@@ -3629,6 +3629,11 @@ static void FS_GetModDescription( const char *modDir, char *description, int des
 			nDescLen = FS_Read( description, nDescLen, descHandle );
 			if ( nDescLen >= 0 ) {
 				description[ nDescLen ] = '\0';
+				while ( nDescLen > 0 && description[ nDescLen - 1 ] == '\n' ) {
+					// strip ending newlines
+					description[ nDescLen - 1 ] = '\0';
+					nDescLen--;
+				}
 			}
 		} else {
 			Q_strncpyz( description, modDir, descriptionLen );
