@@ -5683,6 +5683,21 @@ void *FS_LoadLibrary( const char *name, qboolean useSystemLib )
 		libHandle = Sys_LoadLibrary(name);
 	}
 
+	if (!libHandle)
+	{
+		const char *topDir;
+		char libPath[MAX_OSPATH];
+
+		topDir = Sys_Pwd();
+
+		if (!*topDir) 
+			topDir = ".";
+
+		Com_sprintf(libPath, sizeof(libPath), "%s%c%s", topDir, PATH_SEP, name);
+		Com_Printf("Trying to load \"%s\" from \"%s\"...\n", name, topDir);
+		libHandle = Sys_LoadLibrary(libPath);
+	}
+
 	while ( !libHandle && sp ) {
 		while ( sp && ( sp->policy != DIR_STATIC || !sp->dir ) ) {
 			sp = sp->next;
