@@ -28,11 +28,9 @@ ifeq ($(COMPILE_PLATFORM),mingw32)
 endif
 
 BUILD_CLIENT     = 1
+BUILD_SERVER     = 0
 
-ifndef BUILD_SERVER
-BUILD_SERVER=0
-endif
-
+USE_SDL          = 1
 USE_CURL         = 1
 USE_LOCAL_HEADERS= 1
 
@@ -48,22 +46,10 @@ USE_VULKAN       = 1
 USE_OPENGL       = 1
 USE_OPENGL_API   = 1
 USE_VULKAN_API   = 1
+USE_RENDERER_DLOPEN = 0
 
-ifndef USE_RENDERER_DLOPEN
-USE_RENDERER_DLOPEN=0
-endif
-
-ifndef USE_SDL
-USE_SDL=1
-endif
-
-ifndef OMEGA
-  ifndef RATMOD
-    ifndef AFTERSHOCK
-      OMEGA=1
-    endif
-  endif
-endif
+# valid options: omega, ratmod, aftershock or null (no mod)
+MOD_DEFAULT      = omega
 
 # valid options: opengl, vulkan
 RENDERER_DEFAULT = opengl
@@ -104,6 +90,10 @@ endif
 #
 #############################################################################
 -include Makefile.local
+
+ifeq ($(COMPILE_PLATFORM),darwin)
+  USE_RENDERER_DLOPEN=1
+endif
 
 ifeq ($(COMPILE_PLATFORM),cygwin)
   PLATFORM=mingw32
@@ -386,20 +376,8 @@ ifeq ($(GENERATE_DEPENDENCIES),1)
   BASE_CFLAGS += -MMD
 endif
 
-ifeq ($(OMEGA),1)
-  BASE_CFLAGS += -DOMEGA
-endif
-
-ifeq ($(RATMOD),1)
-  BASE_CFLAGS += -DRATMOD
-endif
-
-ifeq ($(AFTERSHOCK),1)
-  BASE_CFLAGS += -DAFTERSHOCK
-endif
-
-ifeq ($(QUAKE3),1)
-  BASE_CFLAGS += -DQUAKE3
+ifdef MOD_DEFAULT
+  BASE_CFLAGS += -D$(shell echo $(MOD_DEFAULT) | tr '[:lower:]' '[:upper:]')
 endif
 
 ARCHEXT=
