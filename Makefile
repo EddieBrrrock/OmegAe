@@ -37,7 +37,11 @@ USE_CURL         = 1
 USE_LOCAL_HEADERS= 1
 
 ifndef USE_SYSTEM_JPEG
-USE_SYSTEM_JPEG=0
+  ifeq ($(COMPILE_PLATFORM), linux)
+    USE_SYSTEM_JPEG=1
+  else
+    USE_SYSTEM_JPEG=0
+  endif
 endif
 
 USE_VULKAN       = 1
@@ -593,8 +597,6 @@ else
 #############################################################################
 # SETUP AND BUILD -- *NIX PLATFORMS
 #############################################################################
-
-  USE_SYSTEM_JPEG	= 1
 
   BASE_CFLAGS += -Wall -Wimplicit -Wstrict-prototypes -pipe
 
