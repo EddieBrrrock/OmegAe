@@ -35,7 +35,10 @@ endif
 
 USE_CURL         = 1
 USE_LOCAL_HEADERS= 1
-USE_SYSTEM_JPEG  = 0
+
+ifndef USE_SYSTEM_JPEG
+USE_SYSTEM_JPEG=0
+endif
 
 USE_VULKAN       = 1
 USE_OPENGL       = 1
@@ -590,6 +593,8 @@ else
 #############################################################################
 # SETUP AND BUILD -- *NIX PLATFORMS
 #############################################################################
+
+  USE_SYSTEM_JPEG	= 1
 
   BASE_CFLAGS += -Wall -Wimplicit -Wstrict-prototypes -pipe
 
