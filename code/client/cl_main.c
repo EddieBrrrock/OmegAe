@@ -3827,7 +3827,7 @@ static void CL_InitGLimp_Cvars( void )
 #endif
 	Cvar_CheckRange( r_mode, "-2", va( "%i", s_numVidModes-1 ), CV_INTEGER );
 	Cvar_SetDescription( r_mode, "Set video mode:\n -2 - use current desktop resolution\n -1 - use \\r_customWidth and \\r_customHeight\n  0..N - enter \\modelist for details" );
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(MACOS_X)
 	r_modeFullscreen = Cvar_Get( "r_modeFullscreen", "", CVAR_ARCHIVE | CVAR_LATCH );
 #else
 	r_modeFullscreen = Cvar_Get( "r_modeFullscreen", "-2", CVAR_ARCHIVE | CVAR_LATCH );
@@ -3837,10 +3837,10 @@ static void CL_InitGLimp_Cvars( void )
 	Cvar_SetDescription( r_fullscreen, "Fullscreen mode. Set to 0 for windowed mode." );
 	r_customPixelAspect = Cvar_Get( "r_customPixelAspect", "1", CVAR_ARCHIVE_ND | CVAR_LATCH );
 	Cvar_SetDescription( r_customPixelAspect, "Enables custom aspect of the screen, with \\r_mode -1." );
-	r_customwidth = Cvar_Get( "r_customWidth", "1600", CVAR_ARCHIVE | CVAR_LATCH );
+	r_customwidth = Cvar_Get( "r_customWidth", "1024", CVAR_ARCHIVE | CVAR_LATCH );
 	Cvar_CheckRange( r_customwidth, "4", NULL, CV_INTEGER );
 	Cvar_SetDescription( r_customwidth, "Custom width to use with \\r_mode -1." );
-	r_customheight = Cvar_Get( "r_customHeight", "1024", CVAR_ARCHIVE | CVAR_LATCH );
+	r_customheight = Cvar_Get( "r_customHeight", "768", CVAR_ARCHIVE | CVAR_LATCH );
 	Cvar_CheckRange( r_customheight, "4", NULL, CV_INTEGER );
 	Cvar_SetDescription( r_customheight, "Custom height to use with \\r_mode -1." );
 
